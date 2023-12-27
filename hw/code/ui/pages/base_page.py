@@ -4,6 +4,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from ui.locators import basic
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 
 
 class PageNotOpenedExeption(Exception):
@@ -83,3 +84,17 @@ class BasePage(object):
         self.find(locator, timeout=timeout)
         elem = self.wait(timeout).until(EC.element_to_be_clickable(locator))
         elem.click()
+
+    def multiple_find(self, locator, timeout=15):
+        return WebDriverWait(self.driver, timeout).until(
+            EC.presence_of_all_elements_located(locator)
+        )
+
+    def action_click(self, element):
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", element)
+        WebDriverWait(self.driver, 10).until(EC.visibility_of(element))
+        actions = ActionChains(self.driver, 500)
+        actions.move_to_element(element)
+        actions.click(element)
+        actions.perform()
+        return self

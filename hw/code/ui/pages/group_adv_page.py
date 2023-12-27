@@ -16,10 +16,13 @@ class GroupAdvPage(BasePage):
     url = "https://ads.vk.com/hq/new_create/ad_plan/"
     locators = GroupAdvLocators
 
-    def multiple_find(self, locator, timeout=10):
-        return WebDriverWait(self.driver, timeout).until(
-            EC.presence_of_all_elements_located(locator)
-        )
+    def action_click(self, element):
+        self.driver.execute_script("arguments[0].scrollIntoView(true);", element)
+        actions = ActionChains(self.driver, 500)
+        actions.move_to_element(element)
+        actions.click(element)
+        actions.perform()
+        return self
 
     def site_region_click(self):
         self.click(self.locators.SEARCH_INPUT)
@@ -44,13 +47,6 @@ class GroupAdvPage(BasePage):
         page.driver = self.driver
         page.get_to_next()
 
-        return self
-
-    def action_click(self, element):
-        actions = ActionChains(self.driver, 500)
-        actions.move_to_element(element)
-        actions.click(element)
-        actions.perform()
         return self
 
     def select_demograpy(self):

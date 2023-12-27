@@ -1,3 +1,4 @@
+import os
 import time
 import re
 
@@ -16,18 +17,6 @@ from selenium.webdriver.common.keys import Keys
 class AdvPage(BasePage):
     url = "https://ads.vk.com/hq/new_create/ad_plan/"
     locators = AdvLocators
-
-    def multiple_find(self, locator):
-        return WebDriverWait(self.driver, 15).until(
-            EC.presence_of_all_elements_located(locator)
-        )
-
-    def action_click(self, element):
-        actions = ActionChains(self.driver, 500)
-        actions.move_to_element(element)
-        actions.click(element)
-        actions.perform()
-        return self
 
     def get_page(self):
         page = GroupAdvPage.__new__(GroupAdvPage)
@@ -147,4 +136,22 @@ class AdvPage(BasePage):
         )
 
         self.action_click(el)
+        return self
+
+    def upload_logo(self):
+        self.action_click(self.find(self.locators.LOGO_INPUT, 20))
+        file_input = self.find(self.locators.LOGO_INPUT_FILE)
+
+        current_directory = os.getcwd()
+        download_directory = os.path.join(current_directory, "test.jpg")
+
+        print("Upload dir", download_directory)
+
+        file_input.clear()
+        file_input.send_keys(download_directory)
+
+        el = self.find(self.locators.LOADING_IMG)
+        WebDriverWait(self.driver, 90).until(EC.staleness_of(el))
+
+        self.action_click(self.find(self.locators.CLOSE_MODAL))
         return self

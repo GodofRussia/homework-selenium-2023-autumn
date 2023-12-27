@@ -18,20 +18,6 @@ class SitePage(BasePage):
     url = "https://ads.vk.com/hq/pixels"
     locators = SiteLocators
 
-    def multiple_find(self, locator):
-        return WebDriverWait(self.driver, 10).until(
-            EC.presence_of_all_elements_located(locator)
-        )
-
-    def action_click(self, element):
-        self.driver.execute_script("arguments[0].scrollIntoView(true);", element)
-        WebDriverWait(self.driver, 10).until(EC.visibility_of(element))
-        actions = ActionChains(self.driver, 500)
-        actions.move_to_element(element)
-        actions.click(element)
-        actions.perform()
-        return self
-
     def is_on_site_text(self, text: str, timeout: int = 5):
         returnVal = False
         try:
@@ -46,7 +32,7 @@ class SitePage(BasePage):
         return returnVal
 
     def click_add_button(self):
-        self.click(self.locators.ADD_PIXEL_BUTTON)
+        self.click(self.locators.ADD_PIXEL_BUTTON, 15)
         return self
 
     def is_domen_input_exist(self):

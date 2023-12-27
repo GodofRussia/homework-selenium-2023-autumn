@@ -7,10 +7,8 @@ from ui.pages.adv_page import AdvPage
 from ui.pages.group_adv_page import GroupAdvPage
 from tests.base_case import cookies_and_local_storage
 
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.by import By
 from urllib.parse import urlparse
+
 
 def is_matching_link(link, base_url):
     parsed_link = urlparse(link)
@@ -33,15 +31,21 @@ class TestCompany(BaseCase):
 
     def test_create(self, preparations):
         preparations.create_company()
-        assert is_matching_link(preparations.get_current_url(), "https://ads.vk.com/hq/new_create/ad_plan")
+        assert is_matching_link(
+            preparations.get_current_url(), "https://ads.vk.com/hq/new_create/ad_plan"
+        )
 
     def test_group(self, preparations):
         preparations.group_view(5)
-        assert is_matching_link(preparations.get_current_url(), "https://ads.vk.com/hq/dashboard/ad_groups")
+        assert is_matching_link(
+            preparations.get_current_url(), "https://ads.vk.com/hq/dashboard/ad_groups"
+        )
 
     def test_advertisment(self, preparations):
         preparations.advertisment_view(5)
-        assert is_matching_link(preparations.get_current_url(), "https://ads.vk.com/hq/dashboard/ads")
+        assert is_matching_link(
+            preparations.get_current_url(), "https://ads.vk.com/hq/dashboard/ads"
+        )
 
     def test_list(self, preparations):
         preparations.select_action_list()
@@ -61,12 +65,11 @@ class TestCompany(BaseCase):
         preparations.select_filter().select_started_filter().apply_filters()
 
     def test_download(self, setup_started_filters):
-        setup_started_filters.download(5)
+        setup_started_filters.download(10)
         assert not setup_started_filters.is_on_site_text("Отчет по датам")
 
     def test_settings(self, setup_started_filters):
         setup_started_filters.settings(5)
-        # NOTE can be taken out
         assert not setup_started_filters.is_on_site_text("Настроить столбцы")
 
     @pytest.fixture

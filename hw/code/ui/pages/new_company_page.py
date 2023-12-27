@@ -13,18 +13,6 @@ class NewCompanyPage(BasePage):
     url = "https://ads.vk.com/hq/new_create/ad_plan"
     locators = NewCompanyPageLocators
 
-    def multiple_find(self, locator):
-        return WebDriverWait(self.driver, 10).until(
-            EC.presence_of_all_elements_located(locator)
-        )
-
-    def action_click(self, element):
-        actions = ActionChains(self.driver, 500)
-        actions.move_to_element(element)
-        actions.click(element)
-        actions.perform()
-        return self
-
     def send_keys_with_enter(self, element: WebElement, keys_to_send: str):
         element.click()
         element.clear()
@@ -52,16 +40,12 @@ class NewCompanyPage(BasePage):
         self.action_click(button)
         return self
 
-    def actions_click(self, element):
-        self.action_click(element)
-        return self
-
     def send_keys_site(self, text, timeout=10):
         el = self.find(self.locators.SITE_INPUT, timeout)
         self.send_keys_with_enter(el, text)
         return self
 
-    def send_cost(self, cost, timeout=5):
+    def send_cost(self, cost, timeout=30):
         el = self.find(self.locators.COST_INPUT, timeout)
         el.clear()
         el.send_keys(cost, Keys.RETURN)
@@ -76,18 +60,18 @@ class NewCompanyPage(BasePage):
 
     def click_selector_strategy(self):
         selector = self.find(self.locators.SELECTOR_STRATEGY, 5)
-        self.actions_click(selector)
+        self.action_click(selector)
 
         return self
 
     def select_min_cost(self):
         elements = self.find(self.locators.MIN_STRATEGY)
-        self.actions_click(elements)
+        self.action_click(elements)
         return self
 
     def select_pred_cost(self):
         elements = self.find(self.locators.PRED_STRATEGY)
-        self.actions_click(elements)
+        self.action_click(elements)
         return self
 
     def send_max_click_cost(self, cost):
@@ -117,25 +101,25 @@ class NewCompanyPage(BasePage):
             )
         )
 
-        self.actions_click(element[what_lead])
+        self.action_click(element[what_lead])
         return self
 
     def select_lead_option(self, what_option: int):
         option = WebDriverWait(self.driver, 10).until(
             EC.presence_of_all_elements_located(self.locators.SELECT_LEAD_OPTION)
         )
-        self.actions_click(option[what_option])
+        self.action_click(option[what_option])
 
     def click_date(self):
-        self.actions_click(self.find(self.locators.DATE_PICKER))
+        self.action_click(self.find(self.locators.DATE_PICKER))
         return self
 
     def select_prev_month(self):
-        self.actions_click(self.find(self.locators.DATE_LAST_MONTH_BUTTON))
+        self.action_click(self.find(self.locators.DATE_LAST_MONTH_BUTTON))
         return self
 
     def click_first_day(self):
-        self.actions_click(self.find(self.locators.FIRST_DAY))
+        self.action_click(self.find(self.locators.FIRST_DAY))
         return self
 
     def is_already_selected(self):

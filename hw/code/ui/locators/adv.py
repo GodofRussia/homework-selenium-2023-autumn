@@ -70,3 +70,11 @@ class AdvLocators(BasePageLocators):
         By.XPATH,
         '//div[contains(@class, "MediaLibrary_container")]//div[contains(@class, "Footer")]//button//*[contains(text(),"Добавить")]',
     )
+
+    LOGO_INPUT_FILE = (
+        By.XPATH,
+        '//*[contains(@class, "MediaLibrary")]//input[@type="file"]',
+    )
+
+    LOADING_IMG = (By.XPATH, '//*[contains(@class, "ImageItems_loading")]')
+    CLOSE_MODAL = (By.XPATH, '//button[@aria-label="Close"]')

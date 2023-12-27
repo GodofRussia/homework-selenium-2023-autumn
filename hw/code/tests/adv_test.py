@@ -4,13 +4,10 @@ import time
 from tests.base_case import BaseCase, credentials
 from tests.base_case import cookies_and_local_storage
 
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.action_chains import ActionChains
-from selenium.webdriver.common.by import By
 from ui.pages.adv_page import AdvPage
 
 
-class TestGroup(BaseCase):
+class TestAdv(BaseCase):
     authorize = True
 
     @pytest.fixture(scope="function")
@@ -43,13 +40,18 @@ class TestGroup(BaseCase):
 
         assert get_page.is_on_site_text("Ссылка содержит запрещённый редирект на домен")
 
-    def test_after_create_company(self, get_page: AdvPage):
-        get_page.select_logo(0).write_to_inputs("https://vk.com/").write_to_textarea(
+    @pytest.fixture
+    def upload_logo(self, get_page: AdvPage):
+        get_page.upload_logo()
+        yield get_page
+
+    def test_after_create_company(self, upload_logo: AdvPage):
+        upload_logo.select_logo(0).write_to_inputs("https://vk.com/").write_to_textarea(
             "https://vk.com/"
         )
-        name = get_page.get_company_name()
+        name = upload_logo.get_company_name()
 
-        get_page.click_media_upload().select_media_options().add_media_option()
-        get_page.click_continue_button().click_send_button(15)
+        upload_logo.click_media_upload().select_media_options().add_media_option()
+        upload_logo.click_continue_button().click_send_button(10)
 
-        assert get_page.is_on_site_text(name, 5)
+        assert upload_logo.is_on_site_text(name, 5)

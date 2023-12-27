@@ -18,20 +18,6 @@ class AudiencePage(BasePage):
     url = "https://ads.vk.com/hq/audience"
     locators = AudienceLocators
 
-    def multiple_find(self, locator):
-        return WebDriverWait(self.driver, 10).until(
-            EC.presence_of_all_elements_located(locator)
-        )
-
-    def action_click(self, element):
-        self.driver.execute_script("arguments[0].scrollIntoView(true);", element)
-        WebDriverWait(self.driver, 10).until(EC.visibility_of(element))
-        actions = ActionChains(self.driver, 500)
-        actions.move_to_element(element)
-        actions.click(element)
-        actions.perform()
-        return self
-
     def click_create_button(self):
         btn = self.find(self.locators.CREATE_BUTTON)
         self.action_click(btn)
