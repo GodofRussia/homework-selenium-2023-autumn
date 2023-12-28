@@ -15,7 +15,7 @@ class TestNewCompany(BaseCase):
 
     @pytest.fixture
     def fill_site_field(self, new_company_page: NewCompanyPage):
-        new_company_page.site_region_click().send_keys_site("ababa.com")
+        new_company_page.site_region_click().send_keys_site("ababababba.com")
         yield new_company_page
 
     def test_min_value_cost(self, fill_site_field: NewCompanyPage):
@@ -55,7 +55,7 @@ class TestNewCompany(BaseCase):
         assert new_company_page.is_already_selected()
 
     def test_date_last_not_sooner(self, new_company_page: NewCompanyPage):
-        new_company_page.site_region_click().send_keys_site("ababa.com")
+        new_company_page.site_region_click().send_keys_site("ababababba.com")
         new_company_page.click_date().select_prev_month().click_first_day()
 
         current_date: datetime = datetime.now()

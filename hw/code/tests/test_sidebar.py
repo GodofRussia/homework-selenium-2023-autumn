@@ -10,7 +10,7 @@ class TestSidebar(BaseCase):
 
     @pytest.mark.parametrize("tab", ["Кампании", "Аудитории", "Бюджет", "Обучение", "Центр коммерции", "Сайты", "Мобильные приложения", "Лид-формы", "Настройки", "Помощь"])
     def test_tab_redirecting(self, tab, lk_page: LKPage, cookies_and_local_storage):
-        lk_page.close_banner(15)
+        lk_page.close_banner()
         lk_page.switch_tab(tab, TIMEOUT)
 
         assert lk_page.check_tab_switched(tab, TIMEOUT)

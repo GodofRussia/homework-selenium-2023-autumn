@@ -104,8 +104,8 @@ class CenterOfCommercePage(BasePage):
 
     # clear methods
 
-    def clear_url_input(self):
-        self.clear(self.locators.CATALOG_URL_UNPUT)
+    def clear_url_input(self, timeout = None):
+        self.clear(self.locators.CATALOG_URL_UNPUT, timeout)
 
     def clear_catalog_title(self, timeout=None):
         self.create_catalog_finish()

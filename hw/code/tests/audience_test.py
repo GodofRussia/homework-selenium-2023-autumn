@@ -26,7 +26,6 @@ class TestAudience(BaseCase):
         audience_page.click_checkbox_lead()
 
         audience_page.write_to_from_field(10).write_to_to_field(5)
-        # HACK
         time.sleep(1)
 
         assert audience_page.get_to_value() == 10
@@ -37,7 +36,6 @@ class TestAudience(BaseCase):
         audience_page.click_checkbox_lead()
 
         audience_page.write_to_to_field(5).write_to_from_field(6)
-        # HACK
         time.sleep(1)
         assert audience_page.get_from_value() == 5
 
@@ -45,7 +43,6 @@ class TestAudience(BaseCase):
         audience_page.click_create_button().click_add_source().select_key_phrases_region()
 
         audience_page.write_to_period(0)
-        # HACK
         time.sleep(1)
         assert audience_page.get_period_value() == 1
 
@@ -53,7 +50,6 @@ class TestAudience(BaseCase):
         audience_page.click_create_button().click_add_source().select_key_phrases_region()
 
         audience_page.write_to_period(9999)
-        # HACK
         time.sleep(1)
         assert audience_page.get_period_value() == 30
 

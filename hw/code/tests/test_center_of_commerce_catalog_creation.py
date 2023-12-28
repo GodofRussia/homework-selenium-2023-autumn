@@ -16,37 +16,37 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
     authorize = True
 
     def test_creation_catalog_started(self, center_of_commerce_page: CenterOfCommercePage, cookies_and_local_storage):
-        center_of_commerce_page.close_banner(TIMEOUT)
+        center_of_commerce_page.close_banner()
         center_of_commerce_page.start_creating_catalog(TIMEOUT)
 
         assert center_of_commerce_page.find_new_catalog_title(TIMEOUT) != None
 
     @pytest.mark.parametrize("query,result", [("fff", "Товары – fff"), ("19", "Товары – Каталог 2023-12-19")])
     def test_catalog_search(self, query, result, center_of_commerce_page: CenterOfCommercePage, cookies_and_local_storage):
-        center_of_commerce_page.close_banner(TIMEOUT)
+        center_of_commerce_page.close_banner()
         center_of_commerce_page.search_catalog(query, TIMEOUT)
         
         assert center_of_commerce_page.find_element_with_text('span', result, TIMEOUT) != None
 
     @pytest.mark.parametrize("title", ["Товары – fff", "Товары – Каталог 2023-12-19"])
     def test_redirect_to_catalog(self, title, center_of_commerce_page: CenterOfCommercePage, cookies_and_local_storage):
-        center_of_commerce_page.close_banner(TIMEOUT)
+        center_of_commerce_page.close_banner()
         center_of_commerce_page.go_to_catalog(title, TIMEOUT)
 
         assert center_of_commerce_page.find_element_with_text('span', 'История загрузок', TIMEOUT) != None
 
     def test_creation_title_name_required_message(self, center_of_commerce_page: CenterOfCommercePage, cookies_and_local_storage):
-        center_of_commerce_page.close_banner(TIMEOUT)
+        center_of_commerce_page.close_banner()
         center_of_commerce_page.start_creating_catalog(TIMEOUT)
         center_of_commerce_page.clear_catalog_title(TIMEOUT)
         center_of_commerce_page.create_catalog_finish(TIMEOUT)
         
 
-        assert center_of_commerce_page.find_necessary_field_error(TIMEOUT) != None
+        assert center_of_commerce_page.find_necessary_field_error('div', TIMEOUT) != None
 
     @pytest.mark.parametrize("tab, element", [("feed", "div"), ("marketplace", "div"), ("manual", "span")])
     def test_url_field_error_message(self, tab, element, center_of_commerce_page: CenterOfCommercePage, cookies_and_local_storage):
-        center_of_commerce_page.close_banner(TIMEOUT)
+        center_of_commerce_page.close_banner()
         center_of_commerce_page.start_creating_catalog(TIMEOUT)
         center_of_commerce_page.click_on_tab(tab, TIMEOUT)
         center_of_commerce_page.create_catalog_finish(TIMEOUT)
@@ -55,7 +55,7 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
 
     @pytest.mark.parametrize("tab,url", [("feed", "ddd"), ("marketplace", "dda")])
     def test_creation_url_field_protocol_message(self, tab, url, center_of_commerce_page: CenterOfCommercePage, cookies_and_local_storage):
-        center_of_commerce_page.close_banner(TIMEOUT)
+        center_of_commerce_page.close_banner()
         center_of_commerce_page.start_creating_catalog(TIMEOUT)
         center_of_commerce_page.click_on_tab(tab)
         center_of_commerce_page.fill_url_input(url)
@@ -94,7 +94,7 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
 
     @pytest.mark.parametrize("url", ["https://vk.com/ninoauto"])
     def test_creation_marketplace_error_incorrect_url(self, url, center_of_commerce_page: CenterOfCommercePage, cookies_and_local_storage):
-        center_of_commerce_page.go_to_create_marketplace_catalog(TIMEOUT, TIMEOUT)
+        center_of_commerce_page.go_to_create_marketplace_catalog(TIMEOUT)
         center_of_commerce_page.fill_url_input(url, TIMEOUT)
         center_of_commerce_page.create_catalog_finish(TIMEOUT)
         
@@ -157,6 +157,6 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
         center_of_commerce_page.set_category(category, TIMEOUT)
         center_of_commerce_page.fill_file_input(file_path, TIMEOUT)
         with pytest.raises(TimeoutException):
-            center_of_commerce_page.find_file_downloading_error(TIMEOUT)
+            center_of_commerce_page.find_file_downloading_error(10)
 
         assert center_of_commerce_page.find_downloaded_file(TIMEOUT) != None

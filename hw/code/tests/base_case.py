@@ -1,3 +1,4 @@
+import json
 import time
 from typing import Dict
 from contextlib import contextmanager
@@ -81,16 +82,39 @@ class BaseCase:
                 alert.accept()
             except NoAlertPresentException:
                 pass
-
-            for key, value in cookies[1].items():
+            print(cookies[1])
+            for key, value in cookies[1]:
                 self.driver.execute_script(f"localStorage.setItem('{key}', '{value}');")
 
             for cookie in cookies[0]:
                 self.driver.add_cookie(cookie)
-                
+
+
+def load_localstorage_cookies_from_env():
+    with open(os.path.join(os.path.dirname(__file__), "cookies.json"), "r") as f:
+        cookies = json.load(f)
+
+    with open(os.path.join(os.path.dirname(__file__), "localstorage.json"), "r") as f:
+        localstorage = json.load(f)
+
+    return cookies, localstorage
+
+
+def save_localstorage_cookies_to_env(localstorage, cookies):
+    with open(os.path.join(os.path.dirname(__file__), "localstorage.json"), "w") as f:
+        json.dump(localstorage, f)
+
+    with open(os.path.join(os.path.dirname(__file__), "cookies.json"), "w") as f:
+        json.dump(cookies, f)
+
+
 @pytest.fixture(scope="session")
 def cookies_and_local_storage(credentials, config, service):
     browser = config["browser"]
+
+    if os.path.exists(os.path.join(os.path.dirname(__file__), "cookies.json")):
+        [cookies, local] = load_localstorage_cookies_from_env()
+        return [cookies, local]
     new_driver = get_driver(browser, service)
 
     login_page = LoginPage(new_driver)
@@ -104,7 +128,10 @@ def cookies_and_local_storage(credentials, config, service):
     all_local_storage = new_driver.execute_script(
         "return Object.entries(localStorage);"
     )
-    local_storage_dict = dict(all_local_storage)
+    local_storage_dict = list(all_local_storage)
+
+    save_localstorage_cookies_to_env(all_local_storage, co)
+
     return [co, local_storage_dict]
 
 

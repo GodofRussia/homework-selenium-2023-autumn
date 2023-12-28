@@ -62,9 +62,13 @@ def driver(config, service):
 
 def get_driver(browser, service):
     print("Get driver for browser: ", browser)
-    options = Options()
+    options = webdriver.ChromeOptions()
+    current_directory = os.getcwd()
+    download_directory = os.path.join(current_directory, "tmp")
+    prefs = {"download.default_directory": download_directory}
+    options.add_experimental_option("prefs", prefs)
+    
     if browser == "chrome":
-        options = webdriver.ChromeOptions()
         driver = webdriver.Chrome(options=options, service=service)
 
     elif browser == "firefox":
@@ -72,13 +76,8 @@ def get_driver(browser, service):
         driver = webdriver.Firefox(options=options, service=service)
 
     elif browser == "yandex":
-        options = webdriver.ChromeOptions()
         options.binary_location = "/Applications/Yandex.app/Contents/MacOS/Yandex"
-
-        current_directory = os.getcwd()
-        download_directory = os.path.join(current_directory, "tmp")
-        prefs = {"download.default_directory": download_directory}
-        options.add_experimental_option("prefs", prefs)
+        
         driver = webdriver.Chrome(options=options, service=service)
     else:
         raise RuntimeError(f'Unsupported browser: "{browser}"')

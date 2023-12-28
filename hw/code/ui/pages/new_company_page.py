@@ -148,7 +148,7 @@ class NewCompanyPage(BasePage):
         return returnVal
 
     def get_to_next(self):
-        self.site_region_click().send_keys_site("ababa.com").send_cost(
+        self.site_region_click().send_keys_site("ababababba.com").send_cost(
             206
         ).continue_click()
         return self

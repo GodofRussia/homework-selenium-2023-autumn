@@ -38,7 +38,7 @@ class SitePage(BasePage):
     def is_domen_input_exist(self):
         return bool(self.find(self.locators.INPUT_DOMEN))
 
-    def create_pixel(self, site="ababa.com"):
+    def create_pixel(self, site="ababababba.com"):
         self.click_add_button()
         input = self.find(self.locators.INPUT_DOMEN)
         input.clear()

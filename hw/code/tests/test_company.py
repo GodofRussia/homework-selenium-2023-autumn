@@ -90,6 +90,7 @@ class TestCompany(BaseCase):
 
     @pytest.fixture
     def create_company(self, new_company_page):
+        new_company_page.close_banner()
         page = AdvPage.__new__(AdvPage)
         page.driver = new_company_page.driver
         page.create_company()
@@ -110,6 +111,7 @@ class TestCompany(BaseCase):
 
     @pytest.fixture
     def create_draft(self, company_page):
+        company_page.close_banner()
         page = GroupAdvPage(company_page.driver)
         page.get_to_next()
 

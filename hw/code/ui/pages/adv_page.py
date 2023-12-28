@@ -109,7 +109,7 @@ class AdvPage(BasePage):
         name = self.get_company_name()
 
         self.click_media_upload().select_media_options().add_media_option()
-        self.click_continue_button().click_send_button(10)
+        self.click_continue_button().click_send_button(20)
 
         return name
 

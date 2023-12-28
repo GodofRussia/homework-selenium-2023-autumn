@@ -1,3 +1,4 @@
+import time
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.wait import WebDriverWait
 from ui.pages.lk_page import LKPage
