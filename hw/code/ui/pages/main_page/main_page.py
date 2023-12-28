@@ -22,7 +22,10 @@ class MainPage(BasePage):
     url = "https://ads.vk.com"
     locators = MainPageLocators
 
-    @pytest.mark.xfail()
+    def __init__(self, driver):
+        super().__init__(driver)
+        self.is_opened()
+
     def open_all_cases(self):
         # self.click_element_with_text('a', 'Смотреть все')
         elem = self.multiple_find(self.locators.ALL_CASES_BUTTON)[0]

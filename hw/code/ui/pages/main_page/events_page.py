@@ -14,3 +14,7 @@ class EventsPage(BasePage):
     url = "https://ads.vk.com/events"
     locators = MainPageLocators
 
+    def __init__(self, driver):
+        super().__init__(driver)
+        self.is_opened()
+        
