@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
 import pytest
-from tests.base_case import BaseCase
+from tests.base_case import BaseCase, cookies_and_local_storage, credentials
 from ui.pages.new_company_page import NewCompanyPage
 
 from selenium.webdriver.support import expected_conditions as EC

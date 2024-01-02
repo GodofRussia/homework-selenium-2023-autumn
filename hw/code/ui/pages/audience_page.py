@@ -8,7 +8,9 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from ui.locators.audience import AudienceLocators
+from selenium.common.exceptions import TimeoutException
 
+from ui.pages.consts import WaitTime
 
 class AudiencePage(BasePage):
     url = "https://ads.vk.com/hq/audience"
@@ -20,22 +22,9 @@ class AudiencePage(BasePage):
 
         return self
 
-    def is_on_site_text(self, text: str, timeout: int = 5):
-        returnVal = False
-        try:
-            returnVal = self.wait(timeout).until(
-                EC.presence_of_element_located(
-                    (By.XPATH, f"//*[contains(text(), '{text}')]")
-                )
-            )
-        except Exception as e:
-            returnVal = False
-
-        return returnVal
-
     def write_text_to_name(self, text):
         field = self.find(self.locators.CREATION_NAME_AUDITORY)
-        WebDriverWait(self.driver, 10).until(
+        WebDriverWait(self.driver, WaitTime.MEDIUM_WAIT).until(
             EC.element_to_be_clickable(self.locators.CREATION_NAME_AUDITORY)
         )
         field.clear()
@@ -48,7 +37,7 @@ class AudiencePage(BasePage):
         return self
 
     def select_lead_region(self):
-        region = WebDriverWait(self.driver, 10).until(
+        region = WebDriverWait(self.driver, WaitTime.MEDIUM_WAIT).until(
             EC.visibility_of_element_located(self.locators.LEAD_REGION)
         )
         self.action_click(region)

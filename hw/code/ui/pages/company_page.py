@@ -1,4 +1,5 @@
 import re
+from ui.pages.consts import WaitTime
 from ui.pages.base_page import BasePage
 from ui.locators.company import CompanyPageLocators
 
@@ -20,7 +21,7 @@ class CompanyPage(BasePage):
         self.driver.execute_script(
             "arguments[0].scrollIntoView(true);", element
         )
-        actions = ActionChains(self.driver, 500)
+        actions = ActionChains(self.driver, WaitTime.LONG_WAIT)
         actions.move_to_element(element)
         actions.click(element)
         actions.perform()
@@ -47,8 +48,8 @@ class CompanyPage(BasePage):
     def advertisment_view(self, timeout=None):
         self.click(self.locators.ADVERTISEMENTS_BUTTON, timeout=timeout)
 
-    def select_filter(self, timoeut=None):
-        self.click(self.locators.FILTER_BUTTON, 5)
+    def select_filter(self, timeout=None):
+        self.click(self.locators.FILTER_BUTTON, timeout)
         return self
 
     def select_deleted_filter(self):
@@ -83,18 +84,6 @@ class CompanyPage(BasePage):
         self.action_click(element)
         return self
 
-    def is_on_site_text(self, text: str, timeout: int = 5):
-        returnVal = False
-        try:
-            returnVal = self.wait(timeout).until(
-                EC.presence_of_element_located(
-                    (By.XPATH, f"//*[contains(text(), '{text}')]")
-                )
-            )
-        except Exception as e:
-            returnVal = False
-
-        return returnVal
 
     def group_view(self, timeout=None):
         self.click(self.locators.GROUP_BUTTON, timeout=timeout)
@@ -126,7 +115,7 @@ class CompanyPage(BasePage):
 
     def wait_until_draft_delete(self, el: WebElement):
         try:
-            WebDriverWait(self.driver, 15).until(EC.staleness_of(el))
+            WebDriverWait(self.driver, WaitTime.LONG_WAIT).until(EC.staleness_of(el))
         except TimeoutException:
             pass
 

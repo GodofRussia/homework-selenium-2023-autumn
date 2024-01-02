@@ -1,3 +1,4 @@
+from ui.pages.consts import WaitTime
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.wait import WebDriverWait
 from ui.pages.base_page import BasePage
@@ -6,7 +7,7 @@ from ui.locators.new_company import NewCompanyPageLocators
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
-
+from selenium.common.exceptions import TimeoutException
 
 class NewCompanyPage(BasePage):
     url = "https://ads.vk.com/hq/new_create/ad_plan"
@@ -19,7 +20,7 @@ class NewCompanyPage(BasePage):
 
         return self
 
-    def site_region_click(self, timeout=15):
+    def site_region_click(self, timeout=WaitTime.LONG_WAIT):
         self.click(self.locators.SITE_REGION, timeout)
         return self
 
@@ -31,7 +32,7 @@ class NewCompanyPage(BasePage):
         self.click(self.locators.LEAD_FORM_REGION)
         return self
 
-    def continue_click(self, timeout=10):
+    def continue_click(self, timeout=WaitTime.MEDIUM_WAIT):
         button = WebDriverWait(self.driver, timeout).until(
             EC.element_to_be_clickable(self.locators.CONTINUE_BUTTON)
         )
@@ -39,12 +40,12 @@ class NewCompanyPage(BasePage):
         self.action_click(button)
         return self
 
-    def send_keys_site(self, text, timeout=10):
+    def send_keys_site(self, text, timeout=WaitTime.MEDIUM_WAIT):
         el = self.find(self.locators.SITE_INPUT, timeout)
         self.send_keys_with_enter(el, text)
         return self
 
-    def send_cost(self, cost, timeout=30):
+    def send_cost(self, cost, timeout=WaitTime.LONG_WAIT):
         el = self.find(self.locators.COST_INPUT, timeout)
         el.clear()
         el.send_keys(cost, Keys.RETURN)
@@ -58,7 +59,7 @@ class NewCompanyPage(BasePage):
         return self
 
     def click_selector_strategy(self):
-        selector = self.find(self.locators.SELECTOR_STRATEGY, 5)
+        selector = self.find(self.locators.SELECTOR_STRATEGY, WaitTime.SHORT_WAIT)
         self.action_click(selector)
 
         return self
@@ -94,7 +95,7 @@ class NewCompanyPage(BasePage):
         return self
 
     def select_lead_click(self, what_lead: int):
-        element = WebDriverWait(self.driver, 10).until(
+        element = WebDriverWait(self.driver, WaitTime.MEDIUM_WAIT).until(
             EC.presence_of_all_elements_located(
                 (By.XPATH, '//*[@data-testid="lead-form-select"]')
             )
@@ -104,7 +105,7 @@ class NewCompanyPage(BasePage):
         return self
 
     def select_lead_option(self, what_option: int):
-        option = WebDriverWait(self.driver, 10).until(
+        option = WebDriverWait(self.driver, WaitTime.MEDIUM_WAIT).until(
             EC.presence_of_all_elements_located(
                 self.locators.SELECT_LEAD_OPTION
             )
@@ -135,18 +136,6 @@ class NewCompanyPage(BasePage):
     def is_less_than_hundred(self):
         return self.find(self.locators.ERROR_LESS_THAN_HUN)
 
-    def is_on_site_text(self, text: str, timeout: int = 5):
-        returnVal = False
-        try:
-            returnVal = self.wait(timeout).until(
-                EC.presence_of_element_located(
-                    (By.XPATH, f"//*[contains(text(), '{text}')]")
-                )
-            )
-        except Exception as e:
-            returnVal = False
-
-        return returnVal
 
     def get_to_next(self):
         self.site_region_click().send_keys_site("ababababba.com").send_cost(

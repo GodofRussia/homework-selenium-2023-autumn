@@ -5,13 +5,14 @@ from selenium.webdriver.remote.webelement import WebElement
 from ui.locators import basic
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 
 from contextlib import contextmanager
-
+from ui.pages.consts import WaitTime
 
 class PageNotOpenedExeption(Exception):
     pass
@@ -200,26 +201,39 @@ class BasePage(object):
             )
         )
 
-    def multiple_find(self, locator, timeout=15):
+    def multiple_find(self, locator, timeout=WaitTime.MEDIUM_WAIT):
         return WebDriverWait(self.driver, timeout).until(
             EC.presence_of_all_elements_located(locator)
         )
 
-    def action_click(self, element, timeout=500):
+    def action_click(self, element, timeout=WaitTime.LONG_WAIT):
         self.driver.execute_script(
             "arguments[0].scrollIntoView(true);", element
         )
-        WebDriverWait(self.driver, 10).until(EC.visibility_of(element))
+        WebDriverWait(self.driver, timeout).until(EC.visibility_of(element))
 
         actions = ActionChains(self.driver, timeout)
         actions.move_to_element(
-            WebDriverWait(self.driver, 10).until(
+            WebDriverWait(self.driver, timeout).until(
                 EC.element_to_be_clickable(element)
             )
         )
         actions.click(element)
         actions.perform()
         return self
+
+    def is_on_site_text(self, text: str, timeout: int = WaitTime.SHORT_WAIT):
+        returnVal = False
+        try:
+            returnVal = self.wait(timeout).until(
+                EC.presence_of_element_located(
+                    (By.XPATH, f"//*[contains(text(), '{text}')]")
+                )
+            )
+        except TimeoutException as e:
+            returnVal = False
+
+        return returnVal
 
     @contextmanager
     def wait_for_url_change(self, timeout=10, **kwargs):
