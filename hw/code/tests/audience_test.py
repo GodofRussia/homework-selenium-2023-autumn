@@ -66,7 +66,6 @@ class TestAudience(BaseCase):
         audience_page.click_save_button_modal()
 
         name = audience_page.get_name_audience()
-
         audience_page.click_save_button()
         audience_page.select_vk_group_filter()
 

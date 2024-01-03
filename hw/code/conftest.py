@@ -2,7 +2,7 @@ from ui.fixtures import *
 
 
 def pytest_addoption(parser):
-    parser.addoption("--browser", default="yandex")
+    parser.addoption("--browser", default="chrome")
     # parser.addoption('--debug_log', action='store_true')
 
 

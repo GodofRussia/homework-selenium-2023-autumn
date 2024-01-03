@@ -16,16 +16,6 @@ class GroupAdvPage(BasePage):
     url = "https://ads.vk.com/hq/new_create/ad_plan"
     locators = GroupAdvLocators
 
-    def action_click(self, element):
-        self.driver.execute_script(
-            "arguments[0].scrollIntoView(true);", element
-        )
-        actions = ActionChains(self.driver, WaitTime.LONG_WAIT)
-        actions.move_to_element(element)
-        actions.click(element)
-        actions.perform()
-        return self
-
     def site_region_click(self):
         self.click(self.locators.SEARCH_INPUT)
         el = self.find(self.locators.SEARCH_INPUT)
@@ -52,20 +42,20 @@ class GroupAdvPage(BasePage):
         return self
 
     def select_demograpy(self):
-        self.action_click(self.find(self.locators.DEMOGRAPHY_REGION))
+        self.action_click_not_clickable(self.find(self.locators.DEMOGRAPHY_REGION))
         return self
 
     def select_bottom_age(self, age: int):
         el = self.multiple_find(self.locators.AGE_FIELD)[0]
 
-        self.action_click(el)
+        self.action_click_not_clickable(el)
         el.send_keys(age, Keys.RETURN)
 
         return self
 
     def select_upper_age(self, age: int):
         el = self.multiple_find(locator=self.locators.AGE_FIELD)[1]
-        self.action_click(el)
+        self.action_click_not_clickable(el)
         el.send_keys(age, Keys.RETURN)
 
         return self
@@ -80,7 +70,7 @@ class GroupAdvPage(BasePage):
 
     def click_continue_button(self):
         el = self.multiple_find(self.locators.FOOTER_BUTTONS)[1]
-        self.action_click(el)
+        self.action_click_not_clickable(el)
         return self
 
     def wait_load_page(self):
@@ -89,13 +79,13 @@ class GroupAdvPage(BasePage):
         return self
 
     def click_interest_region(self, timeout=WaitTime.MEDIUM_WAIT):
-        self.action_click(
+        self.action_click_not_clickable(
             self.multiple_find(self.locators.INTEREST_REGION, timeout)[0]
         )
         return self
 
     def click_key_phrases(self, timeout=WaitTime.MEDIUM_WAIT):
-        self.action_click(self.find(self.locators.KEY_PHRASES, timeout))
+        self.action_click_not_clickable(self.find(self.locators.KEY_PHRASES, timeout))
 
         return self
 
@@ -118,11 +108,11 @@ class GroupAdvPage(BasePage):
         return self
 
     def click_device_region(self):
-        self.action_click(self.find(self.locators.DEVICES))
+        self.action_click_not_clickable(self.find(self.locators.DEVICES))
         return self
 
     def remove_device(self, what_device: int):
-        self.action_click(
+        self.action_click_not_clickable(
             self.multiple_find(self.locators.DEVICES_OPTIONS)[what_device]
         )
         return self
@@ -135,11 +125,11 @@ class GroupAdvPage(BasePage):
         return disalbed_att and checked_att
 
     def click_url_region(self):
-        self.action_click(self.find(self.locators.URL_PARAMETER_REGION))
+        self.action_click_not_clickable(self.find(self.locators.URL_PARAMETER_REGION))
         return self
 
     def select_utm(self):
-        self.action_click(self.multiple_find(self.locators.URL_OPTIONS)[1])
+        self.action_click_not_clickable(self.multiple_find(self.locators.URL_OPTIONS)[1])
         return self
 
     def send_text_url(self, text: str):
