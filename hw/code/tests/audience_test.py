@@ -25,9 +25,8 @@ class TestAudience(BaseCase):
         audience_page.click_checkbox_lead()
 
         audience_page.write_to_from_field(10).write_to_to_field(5)
-        time.sleep(1)
 
-        assert audience_page.get_to_value() == 10
+        assert audience_page.wait_to_filed_equal(10)
 
     def test_change_number_to_smaller(self, audience_page: AudiencePage):
         audience_page.click_create_button().click_add_source()
@@ -36,24 +35,23 @@ class TestAudience(BaseCase):
         audience_page.click_checkbox_lead()
 
         audience_page.write_to_to_field(5).write_to_from_field(6)
-        time.sleep(1)
-        assert audience_page.get_from_value() == 5
+
+        assert audience_page.wait_from_filed_equal(5)
 
     def test_select_period_zero(self, audience_page: AudiencePage):
         audience_page.click_create_button().click_add_source()
         audience_page.select_key_phrases_region()
-
+        
         audience_page.write_to_period(0)
-        time.sleep(1)
-        assert audience_page.get_period_value() == 1
+
+        assert audience_page.wait_period_filed_equal(1)
 
     def test_select_period_big_value(self, audience_page: AudiencePage):
         audience_page.click_create_button().click_add_source()
         audience_page.select_key_phrases_region()
 
         audience_page.write_to_period(9999)
-        time.sleep(1)
-        assert audience_page.get_period_value() == 30
+        assert audience_page.wait_period_filed_equal(30)
 
     def test_user_list(self, audience_page: AudiencePage):
         audience_page.click_user_list()

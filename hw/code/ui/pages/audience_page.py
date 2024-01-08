@@ -170,3 +170,30 @@ class AudiencePage(BasePage):
             lambda _: self.wait_for_dropdown_filter(filter_btn))
         
         return self
+
+    def is_value_equal(self, locator, what_element, value):
+        try:
+            el = self.multiple_find(locator)[what_element]
+            return el.get_attribute("value") == str(value)
+        except TimeoutException:
+            pass
+
+        return False
+    
+    def wait_until_value_equal(self, locator, what_element, old_value):
+        WebDriverWait(self.driver, WaitTime.LONG_WAIT).until(
+            lambda _: self.is_value_equal(locator, what_element, old_value))
+
+        return self
+
+    def wait_to_filed_equal(self, value):
+        self.wait_until_value_equal(self.locators.LEAD_INPUT_DAYS, 0, value)
+        return self
+    
+    def wait_from_filed_equal(self, value):
+        self.wait_until_value_equal(self.locators.LEAD_INPUT_DAYS, 1, value)
+        return self
+    
+    def wait_period_filed_equal(self, value):
+        self.wait_until_value_equal(self.locators.KEY_DAYS_PERIOD, 0, value)
+        return self

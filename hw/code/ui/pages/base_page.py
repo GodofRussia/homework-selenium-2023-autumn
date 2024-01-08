@@ -222,7 +222,7 @@ class BasePage(object):
         actions.perform()
         return self
 
-    def action_click_not_clickable(self, element, timeout):
+    def action_click_not_clickable(self, element, timeout = WaitTime.MEDIUM_WAIT):
         self.driver.execute_script(
             "arguments[0].scrollIntoView(true);", element
         )
@@ -232,13 +232,15 @@ class BasePage(object):
         actions.perform()
         return self
 
-    def search_action_click(self, locator, what_choose:int|None = 0, timeout:int|None = WaitTime.LONG_WAIT):
+    def search_action_click(self, locator, what_choose:int = 0, timeout:int = WaitTime.LONG_WAIT):
         el = self.multiple_find(locator, timeout)[what_choose]
         self.action_click(el,timeout)
         
         return self
 
-    def search_action_click_not_clickable(self, locator, what_choose:int|None = 0, timeout:int|None = WaitTime.LONG_WAIT):
+    def search_action_click_not_clickable(self, locator, what_choose:int = 0, timeout:int = WaitTime.LONG_WAIT):
+        if not timeout:
+            timeout = WaitTime.LONG_WAIT
         el = self.multiple_find(locator, timeout)[what_choose]
         self.action_click_not_clickable(el,timeout)
         

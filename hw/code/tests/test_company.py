@@ -1,5 +1,5 @@
 import pytest
-from tests.base_case import BaseCase
+from tests.base_case import BaseCase, cookies_and_local_storage, credentials
 from ui.pages.company_page import CompanyPage
 from ui.pages.adv_page import AdvPage
 from ui.pages.group_adv_page import GroupAdvPage

@@ -67,3 +67,13 @@ class SiteLocators(BasePageLocators):
         By.XPATH,
         '//*[contains(@class, "Modal")]//button//*[contains(text(),"Создать")]',
     )
+
+    MORE_OPTIONS = (By.XPATH, '//div[@role="table"]//button')
+    DELETE_OPTION = (By.XPATH, '//*[@data-testid="dropdown-item"]')
+
+    MODAL_BUTTONS = (
+        By.XPATH, '//*[contains(@class, "vkuiModalCardBase__actions")]//button')
+
+    PIXEL_ID = (By.XPATH, '//*[contains(text(),"Создан ID")]')
+
+    SETTINGS_PAGE_ELEMENT = (By.XPATH, '//*[contains(text(), "Код пикселя")]')

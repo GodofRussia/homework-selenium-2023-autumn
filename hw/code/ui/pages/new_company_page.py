@@ -1,3 +1,4 @@
+import time
 from ui.pages.consts import WaitTime
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.wait import WebDriverWait
@@ -32,12 +33,9 @@ class NewCompanyPage(BasePage):
         self.click(self.locators.LEAD_FORM_REGION)
         return self
 
-    def continue_click(self, timeout=WaitTime.MEDIUM_WAIT):
-        button = WebDriverWait(self.driver, timeout).until(
-            EC.element_to_be_clickable(self.locators.CONTINUE_BUTTON)
-        )
-
-        self.action_click(button)
+    def continue_click(self, timeout=WaitTime.LONG_WAIT):
+        self.search_action_click(
+            locator=self.locators.CONTINUE_BUTTON, what_choose=-1, timeout=timeout)
         return self
 
     def send_keys_site(self, text, timeout=WaitTime.MEDIUM_WAIT):
@@ -95,6 +93,7 @@ class NewCompanyPage(BasePage):
         return self
 
     def select_lead_click(self, what_lead: int):
+        # HACK
         element = WebDriverWait(self.driver, WaitTime.MEDIUM_WAIT).until(
             EC.presence_of_all_elements_located(
                 (By.XPATH, '//*[@data-testid="lead-form-select"]')
@@ -105,23 +104,19 @@ class NewCompanyPage(BasePage):
         return self
 
     def select_lead_option(self, what_option: int):
-        option = WebDriverWait(self.driver, WaitTime.MEDIUM_WAIT).until(
-            EC.presence_of_all_elements_located(
-                self.locators.SELECT_LEAD_OPTION
-            )
-        )
-        self.action_click(option[what_option])
+        self.search_action_click(
+            self.locators.SELECT_LEAD_OPTION, what_option)
 
     def click_date(self):
-        self.action_click(self.find(self.locators.DATE_PICKER))
+        self.search_action_click(self.locators.DATE_PICKER)
         return self
 
     def select_prev_month(self):
-        self.action_click(self.find(self.locators.DATE_LAST_MONTH_BUTTON))
+        self.search_action_click(self.locators.DATE_LAST_MONTH_BUTTON)
         return self
 
     def click_first_day(self):
-        self.action_click(self.find(self.locators.FIRST_DAY))
+        self.search_action_click(self.locators.FIRST_DAY)
         return self
 
     def is_already_selected(self):
@@ -136,9 +131,29 @@ class NewCompanyPage(BasePage):
     def is_less_than_hundred(self):
         return self.find(self.locators.ERROR_LESS_THAN_HUN)
 
+    # TODO check name
+    def wait_for_dropdown_filter(self, filter_btn)->bool:
+        try:
+            self.action_click(filter_btn)
+            WebDriverWait(self.driver, WaitTime.SUPER_SHORT_WAIT).until(
+                lambda _: self.is_on_site_text('Регионы показа'))
+            return True
+        except TimeoutException:
+            pass
+
+        return False
+
+    def click_until_next_page(self):
+        filter_btn = self.multiple_find(self.locators.CONTINUE_BUTTON)[-1]
+        WebDriverWait(self.driver, WaitTime.MEDIUM_WAIT).until(
+            lambda _: self.wait_for_dropdown_filter(filter_btn))
+        
+        return self
+        
 
     def get_to_next(self):
         self.site_region_click().send_keys_site("ababababba.com").send_cost(
             206
-        ).continue_click()
+        )
+        self.click_until_next_page()
         return self

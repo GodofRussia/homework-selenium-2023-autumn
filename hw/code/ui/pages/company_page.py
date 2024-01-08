@@ -1,4 +1,5 @@
 import re
+import time
 from ui.pages.consts import WaitTime
 from ui.pages.base_page import BasePage
 from ui.locators.company import CompanyPageLocators
@@ -20,6 +21,8 @@ class CompanyPage(BasePage):
         return self.driver.current_url
 
     def create_company(self, timeout=None):
+        if not timeout:
+            timeout = WaitTime.MEDIUM_WAIT
         self.click(self.locators.CREATE_BUTTON, timeout=timeout)
         return self
 
@@ -71,8 +74,9 @@ class CompanyPage(BasePage):
         self.click(self.locators.DRAFT_BUTTON)
         return self
 
-    def select_draft_option(self, what_to_select=0):
-        self.search_action_click_not_clickable(self.locators.DRAFT_OPTIONS, what_to_select)
+    def select_draft_option(self):
+        el = self.multiple_find(self.locators.DRAFT_OPTIONS)[0]
+        self.click(self.locators.DRAFT_OPTIONS)
         return el
 
     def delete_draft(self):
@@ -83,17 +87,31 @@ class CompanyPage(BasePage):
         return self.find(self.locators.ACTION_SELECTOR).get_attribute("class")
 
     def click_approve_delete(self):
-        self.self.search_action_click_not_clickable(self.locators.DELETE_MODAL)
+        self.search_action_click_not_clickable(self.locators.DELETE_MODAL)
         return self
-
-    def not_on_site(self, text: str):
-        res = self.is_on_site_text(text)
-        return not res
 
     def wait_until_draft_delete(self, el: WebElement):
         try:
             WebDriverWait(self.driver, WaitTime.LONG_WAIT).until(EC.staleness_of(el))
         except TimeoutException:
             pass
+
+        return self
+
+    def wait_for_dropdown_filter(self, filter_btn) -> bool:
+        try:
+            self.action_click(filter_btn)
+            WebDriverWait(self.driver, WaitTime.SUPER_SHORT_WAIT).until(
+                EC.presence_of_element_located(self.locators.FILTER_EXIST))
+            return True
+        except TimeoutException:
+            pass
+
+        return False
+
+    def filter_click(self):
+        filter_btn = self.find(self.locators.FILTER_BUTTON)
+        WebDriverWait(self.driver, WaitTime.LONG_WAIT).until(
+            lambda _: self.wait_for_dropdown_filter(filter_btn))
 
         return self

@@ -1,5 +1,6 @@
 import os
 import re
+import time
 
 from selenium.webdriver.support.wait import WebDriverWait
 from ui.locators.adv import AdvLocators
@@ -25,9 +26,7 @@ class AdvPage(BasePage):
         return self
 
     def click_continue_button(self):
-        buttons = self.multiple_find(self.locators.FOOTER_BUTTONS)
-        el = buttons[-1]
-        self.action_click(el)
+        self.search_action_click(self.locators.FOOTER_BUTTONS, 1)
         return self
 
     def send_text_to_title(self, text: str):
@@ -55,11 +54,15 @@ class AdvPage(BasePage):
 
         return self
 
-    def select_logo(self, number_of_logo: int):
-        self.action_click(self.find(self.locators.LOGO_INPUT))
-        el = self.multiple_find(self.locators.LOG_VARIANTS)[number_of_logo]
+    def wait_logo_dissapper(self):
+        el = self.multiple_find(self.locators.LOG_VARIANTS)[0]
+        WebDriverWait(self.driver, WaitTime.SUPER_SHORT_WAIT).until(EC.staleness_of(el))
+        return self
 
-        self.action_click(el)
+    def select_logo(self, number_of_logo: int):
+        self.search_action_click(self.locators.LOGO_INPUT)
+        self.search_action_click(self.locators.LOG_VARIANTS, number_of_logo)
+
         return self
 
     def write_to_inputs(self, text: str):
@@ -82,8 +85,8 @@ class AdvPage(BasePage):
     def get_company_name(self):
         return self.find(self.locators.COMPANY_NAME).text
 
-    def click_send_button(self, timeout=WaitTime.MEDIUM_WAIT):
-        self.action_click(self.find(self.locators.SEND_BUTTON, timeout))
+    def click_send_button(self, timeout=WaitTime.LONG_WAIT):
+        self.search_action_click(locator=self.locators.SEND_BUTTON, timeout=timeout)
         return self
 
     # Return name of company, that was created
@@ -95,37 +98,24 @@ class AdvPage(BasePage):
         name = self.get_company_name()
 
         self.click_media_upload().select_media_options().add_media_option()
-        self.click_continue_button().click_send_button()
+        self.click_continue_until_modal().click_send_button()
 
         return name
 
     def click_media_upload(self):
-        self.action_click(self.find(self.locators.CHOOSE_MEDIA))
+        self.search_action_click(self.locators.CHOOSE_MEDIA)
         return self
 
     def select_media_options(self, options=0):
-        elements = self.multiple_find(self.locators.MEDIA_OPTIONS)
-        WebDriverWait(self.driver, WaitTime.SHORT_WAIT).until(
-            EC.visibility_of_element_located(self.locators.MEDIA_OPTIONS)
-        )
-        self.driver.execute_script(
-            "arguments[0].scrollIntoView(true);", elements[options]
-        )
-        self.action_click(elements[options])
+        self.search_action_click(self.locators.MEDIA_OPTIONS, options)
         return self
 
     def add_media_option(self):
-        el = self.find(self.locators.ADD_MEDIA)
-        self.driver.execute_script("arguments[0].scrollIntoView(true);", el)
-        el = WebDriverWait(self.driver, WaitTime.MEDIUM_WAIT).until(
-            EC.visibility_of_element_located(self.locators.ADD_MEDIA)
-        )
-
-        self.action_click(el)
+        self.search_action_click(self.locators.ADD_MEDIA)
         return self
 
     def upload_logo(self):
-        self.action_click(self.find(self.locators.LOGO_INPUT, WaitTime.LONG_WAIT))
+        self.search_action_click(locator=self.locators.LOGO_INPUT, timeout=WaitTime.LONG_WAIT)
         file_input = self.find(self.locators.LOGO_INPUT_FILE)
 
         current_directory = os.getcwd()
@@ -137,5 +127,23 @@ class AdvPage(BasePage):
         el = self.find(self.locators.LOADING_IMG)
         WebDriverWait(self.driver, WaitTime.LONG_WAIT).until(EC.staleness_of(el))
 
-        self.action_click(self.find(self.locators.CLOSE_MODAL))
+        self.search_action_click(self.locators.CLOSE_MODAL)
+        return self
+
+    def wait_for_modal(self, filter_btn) -> bool:
+        try:
+            self.action_click(filter_btn)
+            WebDriverWait(self.driver, WaitTime.SUPER_SHORT_WAIT).until(
+                EC.presence_of_element_located(self.locators.MODAL_WIN))
+            return True
+        except TimeoutException:
+            pass
+
+        return False
+
+    def click_continue_until_modal(self):
+        btn_to_click = self.multiple_find(self.locators.FOOTER_BUTTONS)[-1]
+        WebDriverWait(self.driver, WaitTime.MEDIUM_WAIT).until(
+            lambda _: self.wait_for_modal(btn_to_click))
+
         return self

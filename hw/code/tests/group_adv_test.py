@@ -49,7 +49,7 @@ class TestGroup(BaseCase):
     def test_key_phrases_error(self, group_adv_page: GroupAdvPage):
         group_adv_page.get_page().wait_load_page()
 
-        group_adv_page.click_interest_region().click_key_phrases()
+        group_adv_page.click_interest_region().click_key_phrases().wait_key_phrase_render()
         group_adv_page.send_key_phrases(
             "строка1" * 71, 10
         ).click_continue_button()
@@ -59,7 +59,7 @@ class TestGroup(BaseCase):
     def test_key_phrases_duplicate(self, group_adv_page: GroupAdvPage):
         group_adv_page.get_page().wait_load_page()
 
-        group_adv_page.click_interest_region().click_key_phrases()
+        group_adv_page.click_interest_region().click_key_phrases().wait_key_phrase_render()
         group_adv_page.send_key_phrases("строка1", 10).send_keys_phrases_minus(
             "строка1"
         )
@@ -76,8 +76,8 @@ class TestGroup(BaseCase):
     def test_url(self, group_adv_page: GroupAdvPage):
         group_adv_page.get_page().wait_load_page()
 
-        group_adv_page.click_url_region().select_utm().send_text_url(
-            "adsabasb"
+        group_adv_page.click_url_region().wait_for_utm_render().select_utm().wait_for_checkbox_load().send_text_url(
+            "adbbbsabasb"
         ).click_continue_button()
 
         assert group_adv_page.is_utm_not_correct()
