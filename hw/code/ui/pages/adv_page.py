@@ -12,11 +12,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-from ui.pages.consts import WaitTime
+from ui.pages.consts import FILENAME_TEST_PICTURE, BASE_POSITIONS, POSITIONS_ADV, URLS, WaitTime
 
 
 class AdvPage(BasePage):
-    url = "https://ads.vk.com/hq/new_create/ad_plan"
+    url = URLS.new_ad
     locators = AdvLocators
 
     def get_page(self):
@@ -31,14 +31,16 @@ class AdvPage(BasePage):
         return self
 
     def send_text_to_title(self, text: str):
-        el = self.multiple_find(self.locators.INPUT_TITLE)[0]
+        el = self.multiple_find(self.locators.INPUT_TITLE)[
+            POSITIONS_ADV.title_position]
         el.clear()
         el.send_keys(text, Keys.RETURN)
 
         return self
 
     def get_title_max(self) -> int:
-        el = self.multiple_find(self.locators.COUNTS_CHARS)[0]
+        el = self.multiple_find(self.locators.COUNTS_CHARS)[
+            POSITIONS_ADV.title_position]
         text = el.text
 
         matches = re.search(r"\d+ / (\d+)", text)
@@ -56,13 +58,14 @@ class AdvPage(BasePage):
         return self
 
     def wait_logo_dissapper(self):
-        el = self.multiple_find(self.locators.LOG_VARIANTS)[0]
+        el = self.multiple_find(self.locators.LOG_VARIANTS)[
+            BASE_POSITIONS.first_search_pos]
         WebDriverWait(self.driver, WaitTime.SUPER_SHORT_WAIT).until(
             EC.staleness_of(el)
         )
         return self
 
-    def select_logo(self, number_of_logo: int):
+    def select_logo(self, number_of_logo: int = BASE_POSITIONS.first_search_pos):
         self.search_action_click(self.locators.LOGO_INPUT)
         self.search_action_click(self.locators.LOG_VARIANTS, number_of_logo)
 
@@ -94,12 +97,11 @@ class AdvPage(BasePage):
         )
         return self
 
-    # Return name of company, that was created
     def create_company(self) -> str:
         self.get_page()
-        self.select_logo(0).write_to_inputs(
-            "https://vk.com/"
-        ).write_to_textarea("https://vk.com/")
+        self.select_logo().write_to_inputs(
+            URLS.correct_url_text
+        ).write_to_textarea(URLS.correct_url_text)
         name = self.get_company_name()
 
         self.click_media_upload().wait_load_upload_modal(
@@ -127,7 +129,8 @@ class AdvPage(BasePage):
         file_input = self.find(self.locators.LOGO_INPUT_FILE)
 
         current_directory = os.getcwd()
-        download_directory = os.path.join(current_directory, "test.jpg")
+        download_directory = os.path.join(
+            current_directory, FILENAME_TEST_PICTURE)
 
         file_input.clear()
         file_input.send_keys(download_directory)

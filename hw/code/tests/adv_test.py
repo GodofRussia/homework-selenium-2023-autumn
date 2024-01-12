@@ -48,7 +48,7 @@ class TestAdv(BaseCase):
         yield get_page
 
     def test_after_create_company(self, upload_logo: AdvPage):
-        upload_logo.select_logo(0).write_to_inputs(
+        upload_logo.select_logo().write_to_inputs(
             URLS.correct_url_text
         ).write_to_textarea(URLS.correct_url_text)
         name = upload_logo.get_company_name()

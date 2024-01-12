@@ -30,27 +30,16 @@ class WaitTime:
     SUPER_SHORT_WAIT = 1
 
 
-class INPUT_FILES:
-    name_of_file_picture = "test.jpg"
+FILENAME_TEST_PICTURE = "test.jpg"
 
 
-class POSITIONS:
+class BASE_POSITIONS:
     first_search_pos = 0
     last_search_pos = -1
 
-    start_days_lead_field_numb = 0
-    end_days_lead_field_numb = 1
 
-    save_btn_pos = 1
-    user_list_pos = 1
-
-    filter_btn_pos = 2
-    event_condition_pos = 1
-    text_url_pos_site_page = 1
-
-    delete_option_pos = 1
-    delete_button_pos = 1
-    cont_btn_adv_page = 1
+class POSITIONS_ADV(BASE_POSITIONS):
+    title_position = 0
 
 
 class URLS:
@@ -70,6 +59,8 @@ class URLS:
     ad_plan_url = "https://ads.vk.com/hq/new_create/ad_plan"
     ad_groups_url = "https://ads.vk.com/hq/dashboard/ad_groups"
     ads_url = "https://ads.vk.com/hq/dashboard/ads"
+
+    new_ad = "https://ads.vk.com/hq/new_create/ad_plan"
 
 
 class ERR_TEXT:
