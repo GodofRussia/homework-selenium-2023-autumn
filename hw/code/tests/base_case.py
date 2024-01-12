@@ -70,6 +70,17 @@ class BaseCase:
 
             for cookie in cookies[0]:
                 self.driver.add_cookie(cookie)
+        
+        before_failed = request.session.testsfailed
+
+        yield
+
+        after_failed = request.session.testsfailed
+
+        if after_failed != before_failed:
+            node_name = request.node.name
+            self.driver.save_screenshot(f"screenshots/fail_{node_name}.png")
+
 
 
 def load_localstorage_cookies_from_env():

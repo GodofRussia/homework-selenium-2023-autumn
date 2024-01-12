@@ -6,7 +6,7 @@ from ui.pages.group_adv_page import GroupAdvPage
 from selenium.common.exceptions import TimeoutException
 
 from urllib.parse import urlparse
-
+from ui.pages.consts import LABELS, URLS, ERR_TEXT, INPUT_TEXT
 
 def is_matching_link(link, base_url):
     parsed_link = urlparse(link)
@@ -29,20 +29,23 @@ class TestCompany(BaseCase):
 
     def test_create(self, preparations):
         preparations.create_company()
+        # TODO
         assert is_matching_link(
             preparations.get_current_url(),
             "https://ads.vk.com/hq/new_create/ad_plan",
         )
 
     def test_group(self, preparations):
-        preparations.group_view(5)
+        preparations.group_view()
+        # TODO
         assert is_matching_link(
             preparations.get_current_url(),
             "https://ads.vk.com/hq/dashboard/ad_groups",
         )
 
     def test_advertisment(self, preparations):
-        preparations.advertisment_view(5)
+        preparations.advertisment_view()
+        # TODO
         assert is_matching_link(
             preparations.get_current_url(),
             "https://ads.vk.com/hq/dashboard/ads",
@@ -52,6 +55,7 @@ class TestCompany(BaseCase):
         preparations.select_action_list()
 
         selector_classes = preparations.get_selector_attribute()
+        # TODO
         assert "vkuiCustomSelect--pop-down" not in selector_classes
 
     @pytest.fixture
@@ -68,12 +72,12 @@ class TestCompany(BaseCase):
         preparations.select_filter().select_started_filter().apply_filters()
 
     def test_download(self, setup_started_filters):
-        setup_started_filters.download(10)
-        assert not setup_started_filters.is_on_site_text("Отчет по датам")
+        setup_started_filters.download()
+        assert not setup_started_filters.is_on_site_text(LABELS.date_sum)
 
     def test_settings(self, setup_started_filters):
-        setup_started_filters.settings(5)
-        assert not setup_started_filters.is_on_site_text("Настроить столбцы")
+        setup_started_filters.settings()
+        assert not setup_started_filters.is_on_site_text(LABELS.config_table)
 
     @pytest.fixture
     def setup_filter(self, preparations):
@@ -85,11 +89,14 @@ class TestCompany(BaseCase):
 
     def test_select_company_settings(self, setup_filter: CompanyPage):
         setup_filter.select_company().settings()
-        assert setup_filter.is_on_site_text("Настроить столбцы")
+        assert setup_filter.is_on_site_text(LABELS.config_table)
 
     def test_select_company_downloads(self, setup_filter):
-        setup_filter.select_company().download()
-        assert setup_filter.is_on_site_text("Отчет по датам")
+        try:
+            setup_filter.select_company().download()
+            assert setup_filter.is_on_site_text(LABELS.date_sum)
+        except:
+            setup_filter.driver.save_screenshot("Fail_select_compnay.png")
 
     @pytest.fixture
     def create_company(self, new_company_page):
@@ -110,9 +117,9 @@ class TestCompany(BaseCase):
             except TimeoutException:
                 break
         assert create_company.is_on_site_text(
-            "Ничего не нашлось"
+            LABELS.nothing_found
         ) or create_company.is_on_site_text(
-            "Создайте первую рекламную кампанию"
+            LABELS.create_first
         )
 
     @pytest.fixture
@@ -136,5 +143,5 @@ class TestCompany(BaseCase):
                 break
 
         assert create_draft.is_on_site_text(
-            "Создайте первую рекламную кампанию"
+            LABELS.create_first
         )

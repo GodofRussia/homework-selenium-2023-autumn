@@ -3,7 +3,7 @@ import time
 from tests.base_case import BaseCase, cookies_and_local_storage, credentials
 
 from ui.pages.audience_page import AudiencePage
-
+from ui.pages.consts import URLS, ERR_TEXT, INPUT_TEXT, LABELS
 
 class TestAudience(BaseCase):
     authorize = True
@@ -11,12 +11,12 @@ class TestAudience(BaseCase):
     def test_open_creation_window(self, audience_page: AudiencePage):
         audience_page.click_create_button()
 
-        assert audience_page.is_on_site_text("Создание аудитории")
+        assert audience_page.is_on_site_text(LABELS.create_auditory_text)
 
     def test_max_len_name(self, audience_page: AudiencePage):
-        audience_page.click_create_button().write_text_to_name("a" * 256)
+        audience_page.click_create_button().write_text_to_name(INPUT_TEXT.string_256_symbols)
 
-        assert audience_page.is_on_site_text("Максимальная длина 255 символов")
+        assert audience_page.is_on_site_text(ERR_TEXT.len_err_auditory)
 
     def test_change_number_to_bigger(self, audience_page: AudiencePage):
         audience_page.click_create_button().click_add_source()
@@ -24,9 +24,10 @@ class TestAudience(BaseCase):
         audience_page.click_lead_input().select_lead_option()
         audience_page.click_checkbox_lead()
 
-        audience_page.write_to_from_field(10).write_to_to_field(5)
+        audience_page.write_to_from_field(
+            INPUT_TEXT.big_value_for_days).write_to_to_field(INPUT_TEXT.small_value_for_days)
 
-        assert audience_page.wait_to_filed_equal(10)
+        assert audience_page.wait_to_filed_equal(INPUT_TEXT.big_value_for_days)
 
     def test_change_number_to_smaller(self, audience_page: AudiencePage):
         audience_page.click_create_button().click_add_source()
@@ -34,24 +35,26 @@ class TestAudience(BaseCase):
         audience_page.click_lead_input().select_lead_option()
         audience_page.click_checkbox_lead()
 
-        audience_page.write_to_to_field(5).write_to_from_field(6)
+        audience_page.write_to_to_field(
+            INPUT_TEXT.small_value_for_days).write_to_from_field(INPUT_TEXT.big_value_for_days)
 
-        assert audience_page.wait_from_filed_equal(5)
+        assert audience_page.wait_from_filed_equal(
+            INPUT_TEXT.small_value_for_days)
 
     def test_select_period_zero(self, audience_page: AudiencePage):
         audience_page.click_create_button().click_add_source()
         audience_page.select_key_phrases_region()
         
-        audience_page.write_to_period(0)
+        audience_page.write_to_period(INPUT_TEXT.less_than_min_period)
 
-        assert audience_page.wait_period_filed_equal(1)
+        assert audience_page.wait_period_filed_equal(INPUT_TEXT.min_period)
 
     def test_select_period_big_value(self, audience_page: AudiencePage):
         audience_page.click_create_button().click_add_source()
         audience_page.select_key_phrases_region()
 
-        audience_page.write_to_period(9999)
-        assert audience_page.wait_period_filed_equal(30)
+        audience_page.write_to_period(INPUT_TEXT.more_than_max_period)
+        assert audience_page.wait_period_filed_equal(INPUT_TEXT.max_period)
 
     def test_user_list(self, audience_page: AudiencePage):
         audience_page.click_user_list()
@@ -60,7 +63,7 @@ class TestAudience(BaseCase):
     def test_filter_vk_group(self, audience_page: AudiencePage):
         audience_page.click_create_button().click_add_source()
         audience_page.select_vk_group_region()
-        audience_page.write_to_vk_group("vk.com/vkeducation").select_vk_group()
+        audience_page.write_to_vk_group(URLS.vk_group_url).select_vk_group()
         audience_page.click_save_button_modal()
 
         name = audience_page.get_name_audience()
@@ -72,11 +75,12 @@ class TestAudience(BaseCase):
     def test_delete_sources(self, audience_page: AudiencePage):
         audience_page.click_create_button().click_add_source()
         audience_page.select_vk_group_region()
-        audience_page.write_to_vk_group("vk.com/vkeducation").select_vk_group()
+        audience_page.write_to_vk_group(
+            URLS.vk_group_url).select_vk_group()
         audience_page.click_save_button_modal()
 
         audience_page.delte_source()
 
         audience_page.click_save_button()
 
-        assert audience_page.is_on_site_text("Создание аудитории")
+        assert audience_page.is_on_site_text(LABELS.create_auditory_text)
