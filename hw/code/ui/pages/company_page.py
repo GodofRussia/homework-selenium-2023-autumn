@@ -1,6 +1,6 @@
 import re
 import time
-from ui.pages.consts import CLASSES, URLS, WaitTime
+from ui.pages.consts import BASE_POSITIONS, CLASSES, URLS, WaitTime
 from ui.pages.base_page import BasePage
 from ui.locators.company import CompanyPageLocators
 from urllib.parse import urlparse
@@ -15,7 +15,7 @@ from selenium.webdriver.remote.webelement import WebElement
 
 
 class CompanyPage(BasePage):
-    url = "https://ads.vk.com/hq/dashboard/ad_plans?mode=ads&attribution=impression&sort=-created"
+    url = URLS.company_url
     locators = CompanyPageLocators
 
     def is_matching_link(self, link, base_url):
@@ -31,7 +31,7 @@ class CompanyPage(BasePage):
     def create_company(self, timeout=None):
         if not timeout:
             timeout = WaitTime.MEDIUM_WAIT
-        self.click(self.locators.CREATE_BUTTON, timeout=timeout)
+        self.click(self.locators.CREATE_BUTTON, timeout)
         return self
 
     def download(self, timeout=None):
@@ -78,7 +78,7 @@ class CompanyPage(BasePage):
         return self
 
     def group_view(self, timeout=None):
-        self.click(self.locators.GROUP_BUTTON, timeout=timeout)
+        self.click(self.locators.GROUP_BUTTON, timeout)
         return self
 
     def go_to_drafts(self):
@@ -86,7 +86,8 @@ class CompanyPage(BasePage):
         return self
 
     def select_draft_option(self):
-        el = self.multiple_find(self.locators.DRAFT_OPTIONS)[0]
+        el = self.multiple_find(self.locators.DRAFT_OPTIONS)[
+            BASE_POSITIONS.first_search_pos]
         self.click(self.locators.DRAFT_OPTIONS)
         return el
 

@@ -87,6 +87,7 @@ class URLS:
     new_ad = "https://ads.vk.com/hq/new_create/ad_plan"
     site_url = "https://ads.vk.com/hq/pixels"
     audience_url = "https://ads.vk.com/hq/audience"
+    company_url = "https://ads.vk.com/hq/dashboard/ad_plans?mode=ads&attribution=impression&sort=-created"
 
 
 class ERR_TEXT:
