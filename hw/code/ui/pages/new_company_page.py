@@ -1,4 +1,5 @@
 import time
+from ui.pages.lead_page import LeadPage
 from ui.pages.consts import BASE_POSITIONS, INPUT_TEXT, LABELS, URLS, WaitTime
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.wait import WebDriverWait

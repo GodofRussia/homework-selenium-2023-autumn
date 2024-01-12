@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
+import time
 import pytest
+from ui.pages.lead_page import LeadPage
 from tests.base_case import BaseCase, cookies_and_local_storage, credentials
 from ui.pages.new_company_page import NewCompanyPage
 
@@ -45,14 +47,24 @@ class TestNewCompany(BaseCase):
 
         assert new_company_page.is_not_found_community()
 
-    # TODO make fixture to create lead
-    # Ask team
-    def test_select_lead_again(self, new_company_page: NewCompanyPage):
-        new_company_page.lead_region_click().select_split()
-        new_company_page.select_lead_click(0).select_lead_option()
+    @pytest.fixture
+    def create_lead(self, new_company_page: NewCompanyPage):
+        driver = new_company_page.driver
+        page = LeadPage.__new__(LeadPage)
+        page.driver = driver
+        page.open()
+        page.create_lead()
 
-        new_company_page.select_lead_click(1)
-        assert new_company_page.is_already_selected()
+        new_company_page.open()
+
+        yield new_company_page
+
+    def test_select_lead_again(self, create_lead: NewCompanyPage):
+        create_lead.lead_region_click().select_split()
+        create_lead.select_lead_click(0).select_lead_option()
+
+        create_lead.select_lead_click(1)
+        assert create_lead.is_already_selected()
 
     def test_date_last_not_sooner(self, new_company_page: NewCompanyPage):
         new_company_page.site_region_click().send_keys_site(URLS.test_site)
