@@ -12,7 +12,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
 
 from contextlib import contextmanager
-from ui.pages.consts import WaitTime
+from ui.pages.consts import URLS, WaitTime
 
 
 class PageNotOpenedExeption(Exception):
@@ -21,7 +21,7 @@ class PageNotOpenedExeption(Exception):
 
 class BasePage(object):
     basic_locators = basic.BasePageLocators()
-    url = "https://ads.vk.com"
+    url = URLS.base_url
 
     # Open url
     def open(self):

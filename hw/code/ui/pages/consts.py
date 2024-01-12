@@ -89,6 +89,8 @@ class URLS:
     audience_url = "https://ads.vk.com/hq/audience"
     company_url = "https://ads.vk.com/hq/dashboard/ad_plans?mode=ads&attribution=impression&sort=-created"
 
+    base_url = "https://ads.vk.com"
+
 
 class ERR_TEXT:
     latin_err_text = "Используйте латиницу только там, где без неё не обойтись"
