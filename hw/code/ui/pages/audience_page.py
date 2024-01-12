@@ -9,11 +9,11 @@ from selenium.webdriver.common.keys import Keys
 from ui.locators.audience import AudienceLocators
 from selenium.common.exceptions import TimeoutException
 
-from ui.pages.consts import WaitTime
+from ui.pages.consts import BASE_POSITIONS, POSITIONS_AUDIENCE, URLS, WaitTime
 
 
 class AudiencePage(BasePage):
-    url = "https://ads.vk.com/hq/audience"
+    url = URLS.audience_url
     locators = AudienceLocators
 
     def click_create_button(self):
@@ -40,11 +40,11 @@ class AudiencePage(BasePage):
         self.search_action_click(self.locators.LEAD_INPUT)
         return self
 
-    def select_lead_option(self, what_option=0):
+    def select_lead_option(self, what_option=BASE_POSITIONS.first_search_pos):
         self.search_action_click(self.locators.LEAD_OPTIONS, what_option)
         return self
 
-    def click_checkbox_lead(self, what_checkbox=0):
+    def click_checkbox_lead(self, what_checkbox=BASE_POSITIONS.first_search_pos):
         self.search_action_click(self.locators.LEAD_CHECKBOXES, what_checkbox)
         return self
 
@@ -55,7 +55,7 @@ class AudiencePage(BasePage):
 
     def write_to_from_field(self, form_days: int):
         input = self.multiple_find(self.locators.LEAD_INPUT_DAYS)
-        from_input = input[0]
+        from_input = input[POSITIONS_AUDIENCE.from_input_days]
         self.remove_symbols_from_el(
             from_input, len(str(self.get_from_value()))
         )
@@ -65,7 +65,7 @@ class AudiencePage(BasePage):
 
     def write_to_to_field(self, form_days: int):
         input = self.multiple_find(self.locators.LEAD_INPUT_DAYS)
-        from_input = input[1]
+        from_input = input[POSITIONS_AUDIENCE.to_input_days]
         self.remove_symbols_from_el(from_input, len(str(self.get_to_value())))
 
         from_input.send_keys(form_days, Keys.RETURN)
@@ -73,11 +73,11 @@ class AudiencePage(BasePage):
 
     def get_from_value(self) -> int:
         input = self.multiple_find(self.locators.LEAD_INPUT_DAYS)
-        return int(input[0].get_attribute("value"))
+        return int(input[POSITIONS_AUDIENCE.from_input_days].get_attribute("value"))
 
     def get_to_value(self) -> int:
         input = self.multiple_find(self.locators.LEAD_INPUT_DAYS)
-        return int(input[1].get_attribute("value"))
+        return int(input[POSITIONS_AUDIENCE.to_input_days].get_attribute("value"))
 
     def select_key_phrases_region(self):
         self.search_action_click(self.locators.KEY_PHRASES_REGION)
@@ -103,16 +103,18 @@ class AudiencePage(BasePage):
         return self
 
     def click_save_button_modal(self):
-        self.search_action_click(self.locators.SAVE_BUTTON, 1)
+        self.search_action_click(
+            self.locators.SAVE_BUTTON, POSITIONS_AUDIENCE.save_button_modal)
         return self
 
     def click_user_list(self):
-        self.search_action_click(self.locators.USER_LIST, 1)
+        self.search_action_click(
+            self.locators.USER_LIST, POSITIONS_AUDIENCE.user_list)
         return
 
     def is_user_list_url(self) -> bool:
         return (
-            "https://ads.vk.com/hq/audience/user_lists"
+            URLS.user_url
             == self.driver.current_url
         )
 
@@ -128,7 +130,7 @@ class AudiencePage(BasePage):
 
     def select_vk_group(self):
         self.search_action_click(self.locators.VK_GROUPS)
-        self.search_action_click(self.locators.VK_GROUPS_OPTIONS, 0)
+        self.search_action_click(self.locators.VK_GROUPS_OPTIONS)
 
         self.empty_click()
         return self
@@ -150,13 +152,13 @@ class AudiencePage(BasePage):
 
         return self
 
-    def delte_source(self, what_source=0):
+    def delte_source(self, what_source=BASE_POSITIONS.first_search_pos):
         self.search_action_click(
             self.locators.SOURCE_BUTTONS, what_source * 2 + 1
         )
 
         self.search_action_click_not_clickable(
-            locator=self.locators.DELETE_BUTTON, what_choose=1
+            self.locators.DELETE_BUTTON, POSITIONS_AUDIENCE.delete_source_btn
         )
 
         return self
@@ -176,7 +178,8 @@ class AudiencePage(BasePage):
         return False
 
     def filter_click(self):
-        filter_btn = self.multiple_find(self.locators.FILTER_BUTTON)[2]
+        filter_btn = self.multiple_find(self.locators.FILTER_BUTTON)[
+            POSITIONS_AUDIENCE.filter_btn]
         WebDriverWait(self.driver, WaitTime.LONG_WAIT).until(
             lambda _: self.wait_for_dropdown_filter(filter_btn)
         )
@@ -200,13 +203,16 @@ class AudiencePage(BasePage):
         return self
 
     def wait_to_filed_equal(self, value):
-        self.wait_until_value_equal(self.locators.LEAD_INPUT_DAYS, 0, value)
+        self.wait_until_value_equal(
+            self.locators.LEAD_INPUT_DAYS, POSITIONS_AUDIENCE.from_input_days, value)
         return self
 
     def wait_from_filed_equal(self, value):
-        self.wait_until_value_equal(self.locators.LEAD_INPUT_DAYS, 1, value)
+        self.wait_until_value_equal(
+            self.locators.LEAD_INPUT_DAYS, POSITIONS_AUDIENCE.to_input_days, value)
         return self
 
     def wait_period_filed_equal(self, value):
-        self.wait_until_value_equal(self.locators.KEY_DAYS_PERIOD, 0, value)
+        self.wait_until_value_equal(
+            self.locators.KEY_DAYS_PERIOD, POSITIONS_AUDIENCE.period_pos, value)
         return self

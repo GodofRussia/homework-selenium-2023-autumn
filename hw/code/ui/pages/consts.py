@@ -53,6 +53,19 @@ class POSITIONS_SITE:
     delete_modal_btn = 1
 
 
+class POSITIONS_AUDIENCE:
+    from_input_days = 0
+    to_input_days = 1
+
+    save_button_modal = 1
+    user_list = 1
+
+    delete_source_btn = 1
+    filter_btn = 2
+
+    period_pos = 0
+
+
 class URLS:
     user_url = "https://ads.vk.com/hq/audience/user_lists"
 
@@ -73,6 +86,7 @@ class URLS:
 
     new_ad = "https://ads.vk.com/hq/new_create/ad_plan"
     site_url = "https://ads.vk.com/hq/pixels"
+    audience_url = "https://ads.vk.com/hq/audience"
 
 
 class ERR_TEXT:
