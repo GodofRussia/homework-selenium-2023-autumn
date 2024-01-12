@@ -1,3 +1,4 @@
+import time
 import pytest
 from tests.base_case import BaseCase, cookies_and_local_storage, credentials
 from ui.pages.company_page import CompanyPage
@@ -5,18 +6,7 @@ from ui.pages.adv_page import AdvPage
 from ui.pages.group_adv_page import GroupAdvPage
 from selenium.common.exceptions import TimeoutException
 
-from urllib.parse import urlparse
-from ui.pages.consts import LABELS, URLS, ERR_TEXT, INPUT_TEXT
-
-def is_matching_link(link, base_url):
-    parsed_link = urlparse(link)
-    parsed_base_url = urlparse(base_url)
-
-    return (
-        parsed_link.scheme == parsed_base_url.scheme
-        and parsed_link.netloc == parsed_base_url.netloc
-        and parsed_link.path.startswith(parsed_base_url.path)
-    )
+from ui.pages.consts import LABELS, URLS, ERR_TEXT, INPUT_TEXT, WaitTime
 
 
 class TestCompany(BaseCase):
@@ -29,45 +19,26 @@ class TestCompany(BaseCase):
 
     def test_create(self, preparations):
         preparations.create_company()
-        # TODO
-        assert is_matching_link(
-            preparations.get_current_url(),
-            "https://ads.vk.com/hq/new_create/ad_plan",
-        )
+        assert preparations.is_ad_plan()
 
     def test_group(self, preparations):
         preparations.group_view()
-        # TODO
-        assert is_matching_link(
-            preparations.get_current_url(),
-            "https://ads.vk.com/hq/dashboard/ad_groups",
-        )
+        assert preparations.is_ad_groups()
 
     def test_advertisment(self, preparations):
         preparations.advertisment_view()
-        # TODO
-        assert is_matching_link(
-            preparations.get_current_url(),
-            "https://ads.vk.com/hq/dashboard/ads",
-        )
+        assert preparations.is_advertisment()
 
     def test_list(self, preparations):
         preparations.select_action_list()
 
-        selector_classes = preparations.get_selector_attribute()
-        # TODO
-        assert "vkuiCustomSelect--pop-down" not in selector_classes
+        assert preparations.selector_has_pop_down()
 
     @pytest.fixture
     def setup_started_filters(self, preparations):
-        # TODO transfer to another function
         preparations.select_filter().select_started_filter().apply_filters()
-        while True:
-            try:
-                preparations.select_company().select_action_list()
-                preparations.select_delete_action()
-            except TimeoutException:
-                break
+        preparations.delete_all_actions()
+
         yield preparations
         preparations.select_filter().select_started_filter().apply_filters()
 
@@ -80,23 +51,19 @@ class TestCompany(BaseCase):
         assert not setup_started_filters.is_on_site_text(LABELS.config_table)
 
     @pytest.fixture
-    def setup_filter(self, preparations):
+    def setup_filter(self, preparations: CompanyPage):
         preparations.select_filter().select_deleted_filter().apply_filters()
         yield preparations
-        preparations.select_filter()
-        preparations.select_deleted_filter()
-        preparations.apply_filters()
+        preparations.select_filter().select_deleted_filter().apply_filters()
 
     def test_select_company_settings(self, setup_filter: CompanyPage):
         setup_filter.select_company().settings()
         assert setup_filter.is_on_site_text(LABELS.config_table)
 
-    def test_select_company_downloads(self, setup_filter):
-        try:
-            setup_filter.select_company().download()
-            assert setup_filter.is_on_site_text(LABELS.date_sum)
-        except:
-            setup_filter.driver.save_screenshot("Fail_select_compnay.png")
+    def test_select_company_downloads(self, setup_filter: CompanyPage):
+        setup_filter.select_company().download()
+        assert setup_filter.is_on_site_text(
+            LABELS.date_sum, WaitTime.MEDIUM_WAIT)
 
     @pytest.fixture
     def create_company(self, new_company_page):
@@ -109,13 +76,9 @@ class TestCompany(BaseCase):
         company_page.select_filter().select_started_filter().apply_filters()
         yield company_page
 
-    def test_company_deletion(self, create_company):
-        while True:
-            try:
-                create_company.select_company().select_action_list()
-                create_company.select_delete_action()
-            except TimeoutException:
-                break
+    def test_company_deletion(self, create_company: CompanyPage):
+        create_company.delete_all_companies()
+
         assert create_company.is_on_site_text(
             LABELS.nothing_found
         ) or create_company.is_on_site_text(
@@ -123,7 +86,7 @@ class TestCompany(BaseCase):
         )
 
     @pytest.fixture
-    def create_draft(self, company_page):
+    def create_draft(self, company_page: CompanyPage):
         company_page.close_banner()
         page = GroupAdvPage(company_page.driver)
         page.get_to_next()
@@ -132,15 +95,9 @@ class TestCompany(BaseCase):
 
         yield company_page
 
-    def test_draft(self, create_draft):
+    def test_draft(self, create_draft: CompanyPage):
         create_draft.go_to_drafts()
-        while True:
-            try:
-                cnt = create_draft.select_draft_option()
-                create_draft.delete_draft().click_approve_delete()
-                create_draft.wait_until_draft_delete(cnt)
-            except TimeoutException:
-                break
+        create_draft.delete_all_drafts()
 
         assert create_draft.is_on_site_text(
             LABELS.create_first

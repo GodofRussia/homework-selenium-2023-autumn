@@ -14,6 +14,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from contextlib import contextmanager
 from ui.pages.consts import WaitTime
 
+
 class PageNotOpenedExeption(Exception):
     pass
 
@@ -222,7 +223,7 @@ class BasePage(object):
         actions.perform()
         return self
 
-    def action_click_not_clickable(self, element, timeout = WaitTime.MEDIUM_WAIT):
+    def action_click_not_clickable(self, element, timeout=WaitTime.MEDIUM_WAIT):
         self.driver.execute_script(
             "arguments[0].scrollIntoView(true);", element
         )
@@ -232,20 +233,19 @@ class BasePage(object):
         actions.perform()
         return self
 
-    def search_action_click(self, locator, what_choose:int = 0, timeout:int = WaitTime.LONG_WAIT):
+    def search_action_click(self, locator, what_choose: int = 0, timeout: int = WaitTime.LONG_WAIT):
         el = self.multiple_find(locator, timeout)[what_choose]
-        self.action_click(el,timeout)
-        
+        self.action_click(el, timeout)
+
         return self
 
-    def search_action_click_not_clickable(self, locator, what_choose:int = 0, timeout:int = WaitTime.LONG_WAIT):
+    def search_action_click_not_clickable(self, locator, what_choose: int = 0, timeout: int = WaitTime.LONG_WAIT):
         if not timeout:
             timeout = WaitTime.LONG_WAIT
         el = self.multiple_find(locator, timeout)[what_choose]
-        self.action_click_not_clickable(el,timeout)
-        
-        return self
+        self.action_click_not_clickable(el, timeout)
 
+        return self
 
     def is_on_site_text(self, text: str, timeout: int = WaitTime.SHORT_WAIT):
         returnVal = False
@@ -271,7 +271,8 @@ class BasePage(object):
             if "url" not in kwargs
             else self.url_cmp_pref(driver.current_url, kwargs["url"])
         )
-        WebDriverWait(self.driver, timeout).until(url_checker, f'curent url = {self.driver.current_url}')
+        WebDriverWait(self.driver, timeout).until(
+            url_checker, f'curent url = {self.driver.current_url}')
 
     @contextmanager
     def wait_for_new_tab_open(self, timeout=10):
@@ -279,4 +280,5 @@ class BasePage(object):
 
         yield
 
-        WebDriverWait(self.driver, timeout).until(EC.number_of_windows_to_be(tabs_num + 1))
+        WebDriverWait(self.driver, timeout).until(
+            EC.number_of_windows_to_be(tabs_num + 1))

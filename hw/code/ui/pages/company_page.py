@@ -1,8 +1,9 @@
 import re
 import time
-from ui.pages.consts import WaitTime
+from ui.pages.consts import CLASSES, URLS, WaitTime
 from ui.pages.base_page import BasePage
 from ui.locators.company import CompanyPageLocators
+from urllib.parse import urlparse
 
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
@@ -17,8 +18,15 @@ class CompanyPage(BasePage):
     url = "https://ads.vk.com/hq/dashboard/ad_plans?mode=ads&attribution=impression&sort=-created"
     locators = CompanyPageLocators
 
-    def get_current_url(self):
-        return self.driver.current_url
+    def is_matching_link(self, link, base_url):
+        parsed_link = urlparse(link)
+        parsed_base_url = urlparse(base_url)
+
+        return (
+            parsed_link.scheme == parsed_base_url.scheme
+            and parsed_link.netloc == parsed_base_url.netloc
+            and parsed_link.path.startswith(parsed_base_url.path)
+        )
 
     def create_company(self, timeout=None):
         if not timeout:
@@ -27,11 +35,13 @@ class CompanyPage(BasePage):
         return self
 
     def download(self, timeout=None):
-        self.search_action_click_not_clickable(self.locators.DOWNLOAD_BUTTON, 0,timeout)
+        self.search_action_click_not_clickable(
+            self.locators.DOWNLOAD_BUTTON, 0, timeout)
         return self
 
     def settings(self, timeout=None):
-        self.search_action_click_not_clickable(self.locators.SETTINGS_BUTTON, timeout=timeout)
+        self.search_action_click_not_clickable(
+            self.locators.SETTINGS_BUTTON, timeout=timeout)
         return self
 
     def advertisment_view(self, timeout=None):
@@ -55,7 +65,8 @@ class CompanyPage(BasePage):
         return self
 
     def select_company(self, number_of_company=0):
-        self.search_action_click_not_clickable(self.locators.COMPANY_OPTIONS, number_of_company)
+        self.search_action_click_not_clickable(
+            self.locators.COMPANY_OPTIONS, number_of_company)
         return self
 
     def select_action_list(self):
@@ -84,7 +95,7 @@ class CompanyPage(BasePage):
         return self
 
     def get_selector_attribute(self):
-        return self.find(self.locators.ACTION_SELECTOR).get_attribute("class")
+        return self.find(locator=self.locators.ACTION_SELECTOR).get_attribute("class")
 
     def click_approve_delete(self):
         self.search_action_click_not_clickable(self.locators.DELETE_MODAL)
@@ -92,7 +103,8 @@ class CompanyPage(BasePage):
 
     def wait_until_draft_delete(self, el: WebElement):
         try:
-            WebDriverWait(self.driver, WaitTime.LONG_WAIT).until(EC.staleness_of(el))
+            WebDriverWait(self.driver, WaitTime.LONG_WAIT).until(
+                EC.staleness_of(el))
         except TimeoutException:
             pass
 
@@ -114,4 +126,53 @@ class CompanyPage(BasePage):
         WebDriverWait(self.driver, WaitTime.LONG_WAIT).until(
             lambda _: self.wait_for_dropdown_filter(filter_btn))
 
+        return self
+
+    def is_ad_plan(self):
+        return self.is_matching_link(
+            self.driver.current_url,
+            URLS.ad_plan_url
+        )
+
+    def is_ad_groups(self):
+        return self.is_matching_link(
+            self.driver.current_url,
+            URLS.ad_groups_url
+        )
+
+    def is_advertisment(self):
+        return self.is_matching_link(
+            self.driver.current_url,
+            URLS.ads_url
+        )
+
+    def selector_has_pop_down(self):
+        return CLASSES.pop_down not in str(self.get_selector_attribute())
+
+    def delete_all_actions(self):
+        while True:
+            try:
+                self.select_company().select_action_list()
+                self.select_delete_action()
+            except TimeoutException:
+                break
+        return self
+
+    def delete_all_drafts(self):
+        while True:
+            try:
+                cnt = self.select_draft_option()
+                self.delete_draft().click_approve_delete()
+                self.wait_until_draft_delete(cnt)
+            except TimeoutException:
+                break
+        return self
+
+    def delete_all_companies(self):
+        while True:
+            try:
+                self.select_company().select_action_list()
+                self.select_delete_action()
+            except TimeoutException:
+                break
         return self

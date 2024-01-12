@@ -10,6 +10,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.common.exceptions import TimeoutException
 
+
 class NewCompanyPage(BasePage):
     url = "https://ads.vk.com/hq/new_create/ad_plan"
     locators = NewCompanyPageLocators
@@ -57,7 +58,8 @@ class NewCompanyPage(BasePage):
         return self
 
     def click_selector_strategy(self):
-        selector = self.find(self.locators.SELECTOR_STRATEGY, WaitTime.SHORT_WAIT)
+        selector = self.find(
+            self.locators.SELECTOR_STRATEGY, WaitTime.SHORT_WAIT)
         self.action_click(selector)
 
         return self
@@ -93,17 +95,16 @@ class NewCompanyPage(BasePage):
         return self
 
     def select_lead_click(self, what_lead: int):
-        # HACK
         element = WebDriverWait(self.driver, WaitTime.MEDIUM_WAIT).until(
             EC.presence_of_all_elements_located(
-                (By.XPATH, '//*[@data-testid="lead-form-select"]')
+                self.locators.SELECTOR_LEAD
             )
         )
 
         self.action_click(element[what_lead])
         return self
 
-    def select_lead_option(self, what_option: int):
+    def select_lead_option(self, what_option: int = 0):
         self.search_action_click(
             self.locators.SELECT_LEAD_OPTION, what_option)
 
@@ -131,8 +132,7 @@ class NewCompanyPage(BasePage):
     def is_less_than_hundred(self):
         return self.find(self.locators.ERROR_LESS_THAN_HUN)
 
-    # TODO check name
-    def wait_for_dropdown_filter(self, filter_btn)->bool:
+    def wait_for_next_page(self, filter_btn) -> bool:
         try:
             self.action_click(filter_btn)
             WebDriverWait(self.driver, WaitTime.SUPER_SHORT_WAIT).until(
@@ -146,10 +146,9 @@ class NewCompanyPage(BasePage):
     def click_until_next_page(self):
         filter_btn = self.multiple_find(self.locators.CONTINUE_BUTTON)[-1]
         WebDriverWait(self.driver, WaitTime.MEDIUM_WAIT).until(
-            lambda _: self.wait_for_dropdown_filter(filter_btn))
-        
+            lambda _: self.wait_for_next_page(filter_btn))
+
         return self
-        
 
     def get_to_next(self):
         self.site_region_click().send_keys_site("ababababba.com").send_cost(

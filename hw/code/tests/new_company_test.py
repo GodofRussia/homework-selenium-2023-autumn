@@ -49,7 +49,7 @@ class TestNewCompany(BaseCase):
     # Ask team
     def test_select_lead_again(self, new_company_page: NewCompanyPage):
         new_company_page.lead_region_click().select_split()
-        new_company_page.select_lead_click().select_lead_option()
+        new_company_page.select_lead_click(0).select_lead_option()
 
         new_company_page.select_lead_click(1)
         assert new_company_page.is_already_selected()

@@ -78,11 +78,13 @@ class GroupAdvPage(BasePage):
         return self
 
     def click_interest_region(self, timeout=WaitTime.MEDIUM_WAIT):
-        self.search_action_click_not_clickable(self.locators.INTEREST_REGION, 0, timeout)
+        self.search_action_click_not_clickable(
+            self.locators.INTEREST_REGION, 0, timeout)
         return self
 
     def click_key_phrases(self, timeout=WaitTime.MEDIUM_WAIT):
-        self.search_action_click_not_clickable(locator=self.locators.KEY_PHRASES, timeout=timeout)
+        self.search_action_click_not_clickable(
+            locator=self.locators.KEY_PHRASES, timeout=timeout)
 
         return self
 
@@ -97,7 +99,8 @@ class GroupAdvPage(BasePage):
         return self
 
     def send_keys_phrases_minus(self, text):
-        el = self.multiple_find(self.locators.KEY_PHRASE_INPUTS, WaitTime.LONG_WAIT)[1]
+        el = self.multiple_find(
+            self.locators.KEY_PHRASE_INPUTS, WaitTime.LONG_WAIT)[1]
 
         el.clear()
         el.send_keys(text, Keys.RETURN)
@@ -109,10 +112,11 @@ class GroupAdvPage(BasePage):
         return self
 
     def remove_device(self, what_device: int):
-        self.search_action_click_not_clickable(self.locators.DEVICES_OPTIONS,what_device)
+        self.search_action_click_not_clickable(
+            self.locators.DEVICES_OPTIONS, what_device)
         return self
 
-    def is_disabled_and_cheked_device(self, what_device: int):
+    def is_disabled_and_checked_device(self, what_device: int):
         el = self.multiple_find(self.locators.DEVICES_OPTIONS)[what_device]
         disalbed_att = el.get_attribute("disabled")
         checked_att = el.get_attribute("checked")
@@ -120,7 +124,8 @@ class GroupAdvPage(BasePage):
         return disalbed_att and checked_att
 
     def click_url_region(self):
-        self.search_action_click_not_clickable(self.locators.URL_PARAMETER_REGION)
+        self.search_action_click_not_clickable(
+            self.locators.URL_PARAMETER_REGION)
         return self
 
     def select_utm(self):
@@ -136,7 +141,8 @@ class GroupAdvPage(BasePage):
 
     def is_checkbox_checked(self):
         try:
-            el = self.multiple_find(self.locators.URL_CHECBOXES, WaitTime.SHORT_WAIT)[1]
+            el = self.multiple_find(
+                self.locators.URL_CHECBOXES, WaitTime.SHORT_WAIT)[1]
             return el.get_attribute("checked")
         except TimeoutException:
             pass
@@ -145,17 +151,18 @@ class GroupAdvPage(BasePage):
     def wait_for_checkbox_load(self):
         WebDriverWait(self.driver, WaitTime.SHORT_WAIT).until(
             lambda _: self.is_checkbox_checked())
-        
+
         return self
 
     def is_utm_renders(self):
         try:
-            el = WebDriverWait(self.driver, WaitTime.SUPER_SHORT_WAIT).until(EC.visibility_of_all_elements_located(self.locators.URL_OPTIONS))
+            el = WebDriverWait(self.driver, WaitTime.SUPER_SHORT_WAIT).until(
+                EC.visibility_of_all_elements_located(self.locators.URL_OPTIONS))
             return len(el) == 3 and el[1].is_displayed()
         except TimeoutException:
             pass
         return False
-    
+
     def wait_for_utm_render(self):
         WebDriverWait(self.driver, WaitTime.SHORT_WAIT).until(
             lambda _: self.is_utm_renders())
@@ -191,7 +198,7 @@ class GroupAdvPage(BasePage):
     def wait_key_phrase_render(self):
         WebDriverWait(self.driver, WaitTime.MEDIUM_WAIT).until(
             lambda _: self.is_region_visible())
-        
+
         return self
 
     def click_until_next_page(self):

@@ -14,6 +14,7 @@ from selenium.webdriver.common.keys import Keys
 
 from ui.pages.consts import WaitTime
 
+
 class AdvPage(BasePage):
     url = "https://ads.vk.com/hq/new_create/ad_plan"
     locators = AdvLocators
@@ -56,7 +57,9 @@ class AdvPage(BasePage):
 
     def wait_logo_dissapper(self):
         el = self.multiple_find(self.locators.LOG_VARIANTS)[0]
-        WebDriverWait(self.driver, WaitTime.SUPER_SHORT_WAIT).until(EC.staleness_of(el))
+        WebDriverWait(self.driver, WaitTime.SUPER_SHORT_WAIT).until(
+            EC.staleness_of(el)
+        )
         return self
 
     def select_logo(self, number_of_logo: int):
@@ -86,7 +89,9 @@ class AdvPage(BasePage):
         return self.find(self.locators.COMPANY_NAME).text
 
     def click_send_button(self, timeout=WaitTime.LONG_WAIT):
-        self.search_action_click(locator=self.locators.SEND_BUTTON, timeout=timeout)
+        self.search_action_click(
+            locator=self.locators.SEND_BUTTON, timeout=timeout
+        )
         return self
 
     # Return name of company, that was created
@@ -97,7 +102,8 @@ class AdvPage(BasePage):
         ).write_to_textarea("https://vk.com/")
         name = self.get_company_name()
 
-        self.click_media_upload().select_media_options().add_media_option()
+        self.click_media_upload().wait_load_upload_modal(
+        ).select_media_options().add_media_option()
         self.click_continue_until_modal().click_send_button()
 
         return name
@@ -115,7 +121,9 @@ class AdvPage(BasePage):
         return self
 
     def upload_logo(self):
-        self.search_action_click(locator=self.locators.LOGO_INPUT, timeout=WaitTime.LONG_WAIT)
+        self.search_action_click(
+            locator=self.locators.LOGO_INPUT, timeout=WaitTime.LONG_WAIT
+        )
         file_input = self.find(self.locators.LOGO_INPUT_FILE)
 
         current_directory = os.getcwd()
@@ -125,7 +133,9 @@ class AdvPage(BasePage):
         file_input.send_keys(download_directory)
 
         el = self.find(self.locators.LOADING_IMG)
-        WebDriverWait(self.driver, WaitTime.LONG_WAIT).until(EC.staleness_of(el))
+        WebDriverWait(self.driver, WaitTime.LONG_WAIT).until(
+            EC.staleness_of(el)
+        )
 
         self.search_action_click(self.locators.CLOSE_MODAL)
         return self
@@ -134,7 +144,8 @@ class AdvPage(BasePage):
         try:
             self.action_click(filter_btn)
             WebDriverWait(self.driver, WaitTime.SUPER_SHORT_WAIT).until(
-                EC.presence_of_element_located(self.locators.MODAL_WIN))
+                EC.presence_of_element_located(self.locators.MODAL_WIN)
+            )
             return True
         except TimeoutException:
             pass
@@ -144,6 +155,12 @@ class AdvPage(BasePage):
     def click_continue_until_modal(self):
         btn_to_click = self.multiple_find(self.locators.FOOTER_BUTTONS)[-1]
         WebDriverWait(self.driver, WaitTime.MEDIUM_WAIT).until(
-            lambda _: self.wait_for_modal(btn_to_click))
+            lambda _: self.wait_for_modal(btn_to_click)
+        )
 
+        return self
+
+    def wait_load_upload_modal(self):
+        WebDriverWait(self.driver, WaitTime.MEDIUM_WAIT).until(
+            EC.visibility_of_all_elements_located(self.locators.MEDIA_OPTIONS))
         return self

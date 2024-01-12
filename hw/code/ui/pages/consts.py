@@ -22,14 +22,17 @@ class MainPageExternalLinks:
 
 MainPageNavigationClass = "Navigation"
 
+
 class WaitTime:
     LONG_WAIT = 20
     MEDIUM_WAIT = 10
     SHORT_WAIT = 5
     SUPER_SHORT_WAIT = 1
 
+
 class INPUT_FILES:
     name_of_file_picture = "test.jpg"
+
 
 class POSITIONS:
     first_search_pos = 0
@@ -37,21 +40,22 @@ class POSITIONS:
 
     start_days_lead_field_numb = 0
     end_days_lead_field_numb = 1
-    
+
     save_btn_pos = 1
     user_list_pos = 1
-    
+
     filter_btn_pos = 2
     event_condition_pos = 1
     text_url_pos_site_page = 1
-    
+
     delete_option_pos = 1
     delete_button_pos = 1
     cont_btn_adv_page = 1
 
+
 class URLS:
     user_url = "https://ads.vk.com/hq/audience/user_lists"
-    
+
     banned_url = "https://labudiduba.com/"
     redirect_url_err = "Ссылка содержит запрещённый редирект на домен"
 
@@ -62,6 +66,10 @@ class URLS:
     bad_url = "adbbbsabasb"
     test_site = "ababababba.com"
     domen_vk_link = "vk.com"
+
+    ad_plan_url = "https://ads.vk.com/hq/new_create/ad_plan"
+    ad_groups_url = "https://ads.vk.com/hq/dashboard/ad_groups"
+    ads_url = "https://ads.vk.com/hq/dashboard/ads"
 
 
 class ERR_TEXT:
@@ -103,16 +111,20 @@ class INPUT_TEXT:
     empty_value = ""
     corrected_cost = 200
 
-    incorrect_input_data = "привет"
+    incorrect_input_collection_data = "привет"
 
 
 class LABELS:
     create_auditory_text = "Создание аудитории"
 
-    date_sum = "Отчет по датам"
+    date_sum = "Отчёт по датам"
     config_table = "Настроить столбцы"
 
     nothing_found = "Ничего не нашлось"
     create_first = "Создайте первую рекламную кампанию"
     show_regions = 'Регионы показа'
     pixel_found = "Нашли пиксели"
+
+
+class CLASSES:
+    pop_down = "vkuiCustomSelect--pop-down"

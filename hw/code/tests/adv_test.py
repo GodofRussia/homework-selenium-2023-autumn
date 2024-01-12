@@ -1,9 +1,11 @@
+import time
 import pytest
 
 from tests.base_case import BaseCase, cookies_and_local_storage, credentials
 
 from ui.pages.adv_page import AdvPage
 from ui.pages.consts import URLS, ERR_TEXT, INPUT_TEXT
+
 
 class TestAdv(BaseCase):
     authorize = True
@@ -51,17 +53,8 @@ class TestAdv(BaseCase):
         ).write_to_textarea(URLS.correct_url_text)
         name = upload_logo.get_company_name()
 
-        upload_logo.click_media_upload().select_media_options()
+        upload_logo.click_media_upload().wait_load_upload_modal().select_media_options()
         upload_logo.add_media_option()
         upload_logo.click_continue_until_modal().click_send_button()
 
         assert upload_logo.is_on_site_text(name, 5)
-
-    def test_1_fail(self, adv_page):
-        assert 1 == 0
-    
-    def test_1_suc(self, adv_page):
-        assert 1 == 1
-
-    def test_11_fail(self, adv_page):
-        assert 1 == 0

@@ -11,6 +11,7 @@ from selenium.common.exceptions import TimeoutException
 
 from ui.pages.consts import WaitTime
 
+
 class AudiencePage(BasePage):
     url = "https://ads.vk.com/hq/audience"
     locators = AudienceLocators
@@ -47,7 +48,7 @@ class AudiencePage(BasePage):
         self.search_action_click(self.locators.LEAD_CHECKBOXES, what_checkbox)
         return self
 
-    def remove_symbols_from_el(self, el, len:int):
+    def remove_symbols_from_el(self, el, len: int):
         for i in range(len):
             el.send_keys(Keys.BACKSPACE)
         return self
@@ -55,7 +56,9 @@ class AudiencePage(BasePage):
     def write_to_from_field(self, form_days: int):
         input = self.multiple_find(self.locators.LEAD_INPUT_DAYS)
         from_input = input[0]
-        self.remove_symbols_from_el(from_input, len(str(self.get_from_value())))
+        self.remove_symbols_from_el(
+            from_input, len(str(self.get_from_value()))
+        )
 
         from_input.send_keys(form_days, Keys.RETURN)
         return self
@@ -84,8 +87,9 @@ class AudiencePage(BasePage):
         period_field = self.find(self.locators.KEY_DAYS_PERIOD)
 
         self.remove_symbols_from_el(
-            period_field, len(str(self.get_period_value())))
-        
+            period_field, len(str(self.get_period_value()))
+        )
+
         period_field.send_keys(period, Keys.RETURN)
 
         return self
@@ -103,7 +107,7 @@ class AudiencePage(BasePage):
         return self
 
     def click_user_list(self):
-        self.search_action_click(self.locators.USER_LIST,1)
+        self.search_action_click(self.locators.USER_LIST, 1)
         return
 
     def is_user_list_url(self) -> bool:
@@ -148,16 +152,23 @@ class AudiencePage(BasePage):
 
     def delte_source(self, what_source=0):
         self.search_action_click(
-            self.locators.SOURCE_BUTTONS, what_source * 2 + 1)
+            self.locators.SOURCE_BUTTONS, what_source * 2 + 1
+        )
 
-        self.search_action_click_not_clickable(locator=self.locators.DELETE_BUTTON, what_choose=1)
+        self.search_action_click_not_clickable(
+            locator=self.locators.DELETE_BUTTON, what_choose=1
+        )
 
         return self
 
-    def wait_for_dropdown_filter(self, filter_btn)->bool:
+    def wait_for_dropdown_filter(self, filter_btn) -> bool:
         try:
             self.action_click(filter_btn)
-            WebDriverWait(self.driver, WaitTime.SUPER_SHORT_WAIT).until(EC.presence_of_element_located(self.locators.FILTER_DROPDOWN_EXIST))
+            WebDriverWait(self.driver, WaitTime.SUPER_SHORT_WAIT).until(
+                EC.presence_of_element_located(
+                    self.locators.FILTER_DROPDOWN_EXIST
+                )
+            )
             return True
         except TimeoutException:
             pass
@@ -167,8 +178,9 @@ class AudiencePage(BasePage):
     def filter_click(self):
         filter_btn = self.multiple_find(self.locators.FILTER_BUTTON)[2]
         WebDriverWait(self.driver, WaitTime.LONG_WAIT).until(
-            lambda _: self.wait_for_dropdown_filter(filter_btn))
-        
+            lambda _: self.wait_for_dropdown_filter(filter_btn)
+        )
+
         return self
 
     def is_value_equal(self, locator, what_element, value):
@@ -179,21 +191,22 @@ class AudiencePage(BasePage):
             pass
 
         return False
-    
+
     def wait_until_value_equal(self, locator, what_element, old_value):
         WebDriverWait(self.driver, WaitTime.LONG_WAIT).until(
-            lambda _: self.is_value_equal(locator, what_element, old_value))
+            lambda _: self.is_value_equal(locator, what_element, old_value)
+        )
 
         return self
 
     def wait_to_filed_equal(self, value):
         self.wait_until_value_equal(self.locators.LEAD_INPUT_DAYS, 0, value)
         return self
-    
+
     def wait_from_filed_equal(self, value):
         self.wait_until_value_equal(self.locators.LEAD_INPUT_DAYS, 1, value)
         return self
-    
+
     def wait_period_filed_equal(self, value):
         self.wait_until_value_equal(self.locators.KEY_DAYS_PERIOD, 0, value)
         return self
