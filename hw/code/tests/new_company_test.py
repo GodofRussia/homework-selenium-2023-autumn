@@ -32,7 +32,8 @@ class TestNewCompany(BaseCase):
 
     def test_empty_pred_cost(self, fill_site_field: NewCompanyPage):
         fill_site_field.click_selector_strategy().select_pred_cost()
-        fill_site_field.send_cost(INPUT_TEXT.corrected_cost).send_max_click_cost(
+        fill_site_field.send_cost(INPUT_TEXT.corrected_cost)
+        fill_site_field.send_max_click_cost(
             INPUT_TEXT.empty_value)
         fill_site_field.continue_click()
 
@@ -43,7 +44,8 @@ class TestNewCompany(BaseCase):
         assert new_company_page.is_must_field()
 
     def test_wrong_group(self, new_company_page: NewCompanyPage):
-        new_company_page.catalog_region_click().select_vk_group(URLS.vk_group_incorrect_url)
+        new_company_page.catalog_region_click()
+        new_company_page.select_vk_group(URLS.vk_group_incorrect_url)
 
         assert new_company_page.is_not_found_community()
 

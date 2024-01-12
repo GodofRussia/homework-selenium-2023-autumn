@@ -141,7 +141,9 @@ class SitePage(BasePage):
         self.driver.execute_script("arguments[0].click();", element)
 
         self.search_action_click(
-            self.locators.DELETE_OPTION, POSITIONS_SITE.delete_btn_pop_up,  WaitTime.SHORT_WAIT)
+            self.locators.DELETE_OPTION,
+            POSITIONS_SITE.delete_btn_pop_up,
+            WaitTime.SHORT_WAIT)
 
         delete_button = self.multiple_find(self.locators.MODAL_BUTTONS)[
             POSITIONS_SITE.delete_modal_btn]
@@ -156,7 +158,9 @@ class SitePage(BasePage):
             el = self.multiple_find(locator)[what_element]
             self.action_click(el)
             WebDriverWait(self.driver, WaitTime.SHORT_WAIT).until(
-                EC.presence_of_element_located(self.locators.SETTINGS_PAGE_ELEMENT))
+                EC.presence_of_element_located(
+                    self.locators.SETTINGS_PAGE_ELEMENT)
+            )
             return True
         except TimeoutException:
             pass
@@ -165,7 +169,10 @@ class SitePage(BasePage):
 
     def click_settings_until_change(self, what_element=0):
         WebDriverWait(self.driver, WaitTime.MEDIUM_WAIT).until(
-            lambda _: self.wait_for_settings(self.locators.SETTINGS, what_element))
+            lambda _: self.wait_for_settings(
+                self.locators.SETTINGS,
+                what_element)
+        )
 
         return self
 

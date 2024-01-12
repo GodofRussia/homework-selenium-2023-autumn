@@ -157,7 +157,10 @@ class GroupAdvPage(BasePage):
     def is_utm_renders(self):
         try:
             el = WebDriverWait(self.driver, WaitTime.SUPER_SHORT_WAIT).until(
-                EC.visibility_of_all_elements_located(self.locators.URL_OPTIONS))
+                EC.visibility_of_all_elements_located(
+                    self.locators.URL_OPTIONS)
+            )
+
             return len(el) == 3 and el[1].is_displayed()
         except TimeoutException:
             pass

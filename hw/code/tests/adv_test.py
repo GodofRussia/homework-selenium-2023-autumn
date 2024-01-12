@@ -53,7 +53,8 @@ class TestAdv(BaseCase):
         ).write_to_textarea(URLS.correct_url_text)
         name = upload_logo.get_company_name()
 
-        upload_logo.click_media_upload().wait_load_upload_modal().select_media_options()
+        upload_logo.click_media_upload().wait_load_upload_modal()
+        upload_logo.select_media_options()
         upload_logo.add_media_option()
         upload_logo.click_continue_until_modal().click_send_button()
 

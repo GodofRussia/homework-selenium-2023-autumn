@@ -12,7 +12,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-from ui.pages.consts import FILENAME_TEST_PICTURE, BASE_POSITIONS, POSITIONS_ADV, URLS, WaitTime
+from ui.pages.consts import FILENAME_TEST_PICTURE, URLS, WaitTime, BASE_POSITIONS, POSITIONS_ADV
 
 
 class AdvPage(BasePage):
@@ -66,7 +66,8 @@ class AdvPage(BasePage):
         )
         return self
 
-    def select_logo(self, number_of_logo: int = BASE_POSITIONS.first_search_pos):
+    def select_logo(self,
+                    number_of_logo: int = BASE_POSITIONS.first_search_pos):
         self.search_action_click(self.locators.LOGO_INPUT)
         self.search_action_click(self.locators.LOG_VARIANTS, number_of_logo)
 

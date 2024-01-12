@@ -37,7 +37,9 @@ class NewCompanyPage(BasePage):
 
     def continue_click(self, timeout=WaitTime.LONG_WAIT):
         self.search_action_click(
-            locator=self.locators.CONTINUE_BUTTON, what_choose=BASE_POSITIONS.last_search_pos, timeout=timeout)
+            self.locators.CONTINUE_BUTTON,
+            BASE_POSITIONS.last_search_pos,
+            timeout)
         return self
 
     def send_keys_site(self, text, timeout=WaitTime.MEDIUM_WAIT):
@@ -105,7 +107,8 @@ class NewCompanyPage(BasePage):
         self.action_click(element[what_lead])
         return self
 
-    def select_lead_option(self, what_option: int = BASE_POSITIONS.first_search_pos):
+    def select_lead_option(self,
+                           what_option: int = BASE_POSITIONS.first_search_pos):
         self.search_action_click(
             self.locators.SELECT_LEAD_OPTION, what_option)
 

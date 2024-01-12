@@ -44,7 +44,8 @@ class AudiencePage(BasePage):
         self.search_action_click(self.locators.LEAD_OPTIONS, what_option)
         return self
 
-    def click_checkbox_lead(self, what_checkbox=BASE_POSITIONS.first_search_pos):
+    def click_checkbox_lead(self,
+                            what_checkbox=BASE_POSITIONS.first_search_pos):
         self.search_action_click(self.locators.LEAD_CHECKBOXES, what_checkbox)
         return self
 
@@ -73,11 +74,13 @@ class AudiencePage(BasePage):
 
     def get_from_value(self) -> int:
         input = self.multiple_find(self.locators.LEAD_INPUT_DAYS)
-        return int(input[POSITIONS_AUDIENCE.from_input_days].get_attribute("value"))
+        return int(
+            input[POSITIONS_AUDIENCE.from_input_days].get_attribute("value"))
 
     def get_to_value(self) -> int:
         input = self.multiple_find(self.locators.LEAD_INPUT_DAYS)
-        return int(input[POSITIONS_AUDIENCE.to_input_days].get_attribute("value"))
+        return int(
+            input[POSITIONS_AUDIENCE.to_input_days].get_attribute("value"))
 
     def select_key_phrases_region(self):
         self.search_action_click(self.locators.KEY_PHRASES_REGION)
@@ -204,15 +207,21 @@ class AudiencePage(BasePage):
 
     def wait_to_filed_equal(self, value):
         self.wait_until_value_equal(
-            self.locators.LEAD_INPUT_DAYS, POSITIONS_AUDIENCE.from_input_days, value)
+            self.locators.LEAD_INPUT_DAYS,
+            POSITIONS_AUDIENCE.from_input_days,
+            value)
         return self
 
     def wait_from_filed_equal(self, value):
         self.wait_until_value_equal(
-            self.locators.LEAD_INPUT_DAYS, POSITIONS_AUDIENCE.to_input_days, value)
+            self.locators.LEAD_INPUT_DAYS,
+            POSITIONS_AUDIENCE.to_input_days,
+            value)
         return self
 
     def wait_period_filed_equal(self, value):
         self.wait_until_value_equal(
-            self.locators.KEY_DAYS_PERIOD, POSITIONS_AUDIENCE.period_pos, value)
+            self.locators.KEY_DAYS_PERIOD,
+            POSITIONS_AUDIENCE.period_pos,
+            value)
         return self

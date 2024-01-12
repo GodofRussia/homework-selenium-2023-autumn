@@ -96,7 +96,8 @@ class CompanyPage(BasePage):
         return self
 
     def get_selector_attribute(self):
-        return self.find(locator=self.locators.ACTION_SELECTOR).get_attribute("class")
+        return self.find(
+            locator=self.locators.ACTION_SELECTOR).get_attribute("class")
 
     def click_approve_delete(self):
         self.search_action_click_not_clickable(self.locators.DELETE_MODAL)
