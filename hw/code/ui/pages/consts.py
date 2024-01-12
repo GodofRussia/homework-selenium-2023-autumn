@@ -38,8 +38,19 @@ class BASE_POSITIONS:
     last_search_pos = -1
 
 
-class POSITIONS_ADV(BASE_POSITIONS):
+class POSITIONS_ADV:
     title_position = 0
+    continue_button = 1
+
+
+class POSITIONS_SITE:
+    category_event = 0
+    event_condition = 1
+
+    text_url_pos = 1
+
+    delete_btn_pop_up = 1
+    delete_modal_btn = 1
 
 
 class URLS:
@@ -61,6 +72,7 @@ class URLS:
     ads_url = "https://ads.vk.com/hq/dashboard/ads"
 
     new_ad = "https://ads.vk.com/hq/new_create/ad_plan"
+    site_url = "https://ads.vk.com/hq/pixels"
 
 
 class ERR_TEXT:

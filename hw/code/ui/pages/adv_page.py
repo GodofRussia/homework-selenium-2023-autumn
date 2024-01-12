@@ -27,7 +27,8 @@ class AdvPage(BasePage):
         return self
 
     def click_continue_button(self):
-        self.search_action_click(self.locators.FOOTER_BUTTONS, 1)
+        self.search_action_click(
+            self.locators.FOOTER_BUTTONS, POSITIONS_ADV.continue_button)
         return self
 
     def send_text_to_title(self, text: str):
@@ -114,7 +115,7 @@ class AdvPage(BasePage):
         self.search_action_click(self.locators.CHOOSE_MEDIA)
         return self
 
-    def select_media_options(self, options=0):
+    def select_media_options(self, options=BASE_POSITIONS.first_search_pos):
         self.search_action_click(self.locators.MEDIA_OPTIONS, options)
         return self
 
@@ -156,7 +157,8 @@ class AdvPage(BasePage):
         return False
 
     def click_continue_until_modal(self):
-        btn_to_click = self.multiple_find(self.locators.FOOTER_BUTTONS)[-1]
+        btn_to_click = self.multiple_find(self.locators.FOOTER_BUTTONS)[
+            BASE_POSITIONS.last_search_pos]
         WebDriverWait(self.driver, WaitTime.MEDIUM_WAIT).until(
             lambda _: self.wait_for_modal(btn_to_click)
         )

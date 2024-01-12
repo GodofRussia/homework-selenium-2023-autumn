@@ -1,6 +1,6 @@
 import re
 import time
-from ui.pages.consts import WaitTime
+from ui.pages.consts import BASE_POSITIONS, LABELS, POSITIONS_SITE, URLS, WaitTime
 
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.wait import WebDriverWait
@@ -17,7 +17,7 @@ from selenium.common.exceptions import TimeoutException
 
 
 class SitePage(BasePage):
-    url = "https://ads.vk.com/hq/pixels"
+    url = URLS.site_url
     locators = SiteLocators
 
     def click_add_button(self):
@@ -27,15 +27,15 @@ class SitePage(BasePage):
     def is_domen_input_exist(self):
         return bool(self.find(self.locators.INPUT_DOMEN))
 
-    # Return id of pixel
-    def create_pixel(self, site="ababababba.com"):
+    def create_pixel(self, site=URLS.test_site):
         self.click_add_button()
+
         input = self.find(self.locators.INPUT_DOMEN)
         input.clear()
         input.send_keys(site, Keys.RETURN)
 
         self.search_action_click(self.locators.ADD_BUTTON_MODAL)
-        if self.is_on_site_text("Нашли пиксели", WaitTime.MEDIUM_WAIT):
+        if self.is_on_site_text(LABELS.pixel_found, WaitTime.MEDIUM_WAIT):
             self.search_action_click(self.locators.CREATE_NEW_PIXEL_REGION)
 
         value = self.find(self.locators.PIXEL_ID, WaitTime.LONG_WAIT)
@@ -43,7 +43,6 @@ class SitePage(BasePage):
 
         match = re.search(r'\d+', value.text)
         if match:
-            print("Pixel match", match.group())
             return match.group()
         else:
             return 0
@@ -68,7 +67,7 @@ class SitePage(BasePage):
                 EC.text_to_be_present_in_element((By.XPATH, "//*"), text)
             )
             return True
-        except Exception:
+        except TimeoutException:
             return False
 
     def click_events(self):
@@ -109,17 +108,20 @@ class SitePage(BasePage):
         return self
 
     def select_event_category(self):
-        self.search_action_click(self.locators.EVENT_SELECTOR, 0)
+        self.search_action_click(
+            self.locators.EVENT_SELECTOR, POSITIONS_SITE.category_event)
         self.search_action_click(self.locators.CATEGORY_BUY_OPTION)
         return self
 
     def select_event_condition(self):
-        self.search_action_click(self.locators.EVENT_SELECTOR, 1)
+        self.search_action_click(
+            self.locators.EVENT_SELECTOR, POSITIONS_SITE.event_condition)
         self.search_action_click(self.locators.CONDITION_OPTION)
         return self
 
     def input_text_url(self, text: str):
-        input = self.multiple_find(self.locators.URL_INPUT)[1]
+        input = self.multiple_find(self.locators.URL_INPUT)[
+            POSITIONS_SITE.text_url_pos]
         input.clear()
         input.send_keys(text, Keys.RETURN)
         return self
@@ -134,14 +136,15 @@ class SitePage(BasePage):
         input.send_keys(text, Keys.RETURN)
         return self
 
-    def delete_pixel(self, what_delete: int = 0):
+    def delete_pixel(self, what_delete: int = BASE_POSITIONS.first_search_pos):
         element = self.multiple_find(self.locators.MORE_OPTIONS)[what_delete]
         self.driver.execute_script("arguments[0].click();", element)
 
         self.search_action_click(
-            self.locators.DELETE_OPTION, 1,  WaitTime.SHORT_WAIT)
+            self.locators.DELETE_OPTION, POSITIONS_SITE.delete_btn_pop_up,  WaitTime.SHORT_WAIT)
 
-        delete_button = self.multiple_find(self.locators.MODAL_BUTTONS)[1]
+        delete_button = self.multiple_find(self.locators.MODAL_BUTTONS)[
+            POSITIONS_SITE.delete_modal_btn]
         self.action_click(delete_button)
 
         WebDriverWait(self.driver, WaitTime.MEDIUM_WAIT).until(
