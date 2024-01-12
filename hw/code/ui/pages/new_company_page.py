@@ -1,5 +1,5 @@
 import time
-from ui.pages.consts import WaitTime
+from ui.pages.consts import BASE_POSITIONS, INPUT_TEXT, LABELS, URLS, WaitTime
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.wait import WebDriverWait
 from ui.pages.base_page import BasePage
@@ -12,7 +12,7 @@ from selenium.common.exceptions import TimeoutException
 
 
 class NewCompanyPage(BasePage):
-    url = "https://ads.vk.com/hq/new_create/ad_plan"
+    url = URLS.new_ad
     locators = NewCompanyPageLocators
 
     def send_keys_with_enter(self, element: WebElement, keys_to_send: str):
@@ -36,7 +36,7 @@ class NewCompanyPage(BasePage):
 
     def continue_click(self, timeout=WaitTime.LONG_WAIT):
         self.search_action_click(
-            locator=self.locators.CONTINUE_BUTTON, what_choose=-1, timeout=timeout)
+            locator=self.locators.CONTINUE_BUTTON, what_choose=BASE_POSITIONS.last_search_pos, timeout=timeout)
         return self
 
     def send_keys_site(self, text, timeout=WaitTime.MEDIUM_WAIT):
@@ -104,7 +104,7 @@ class NewCompanyPage(BasePage):
         self.action_click(element[what_lead])
         return self
 
-    def select_lead_option(self, what_option: int = 0):
+    def select_lead_option(self, what_option: int = BASE_POSITIONS.first_search_pos):
         self.search_action_click(
             self.locators.SELECT_LEAD_OPTION, what_option)
 
@@ -136,7 +136,7 @@ class NewCompanyPage(BasePage):
         try:
             self.action_click(filter_btn)
             WebDriverWait(self.driver, WaitTime.SUPER_SHORT_WAIT).until(
-                lambda _: self.is_on_site_text('Регионы показа'))
+                lambda _: self.is_on_site_text(LABELS.show_regions))
             return True
         except TimeoutException:
             pass
@@ -144,15 +144,16 @@ class NewCompanyPage(BasePage):
         return False
 
     def click_until_next_page(self):
-        filter_btn = self.multiple_find(self.locators.CONTINUE_BUTTON)[-1]
+        filter_btn = self.multiple_find(self.locators.CONTINUE_BUTTON)[
+            BASE_POSITIONS.last_search_pos]
         WebDriverWait(self.driver, WaitTime.MEDIUM_WAIT).until(
             lambda _: self.wait_for_next_page(filter_btn))
 
         return self
 
     def get_to_next(self):
-        self.site_region_click().send_keys_site("ababababba.com").send_cost(
-            206
+        self.site_region_click().send_keys_site(URLS.test_site).send_cost(
+            INPUT_TEXT.corrected_cost
         )
         self.click_until_next_page()
         return self
