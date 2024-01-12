@@ -50,3 +50,5 @@ class CompanyPageLocators(BasePageLocators):
     )
 
     FILTER_EXIST = (By.XPATH, '//div[contains(@class, "form_wrap")]')
+    COMPANY_NUMBER_PLACE = (
+        By.XPATH, '//*[contains(@class, "nameCell_footerCell")]')

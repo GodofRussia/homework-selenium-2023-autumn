@@ -172,8 +172,27 @@ class CompanyPage(BasePage):
     def delete_all_companies(self):
         while True:
             try:
+                cnt = self.get_company_numbers()
                 self.select_company().select_action_list()
                 self.select_delete_action()
+                self.wait_until_company_changes(cnt)
             except TimeoutException:
                 break
+        return self
+
+    def get_company_numbers(self):
+        el = self.find(
+            self.locators.COMPANY_NUMBER_PLACE)
+        match = re.search(r'\d+', el.text)
+
+        if match:
+            return int(match.group())
+
+        return 0
+
+    def wait_until_company_changes(self, previous_company_number):
+        WebDriverWait(self.driver, WaitTime.MEDIUM_WAIT).until_not(
+            EC.text_to_be_present_in_element(
+                (By.XPATH, '//*'), f"Итого: {previous_company_number}")
+        )
         return self
