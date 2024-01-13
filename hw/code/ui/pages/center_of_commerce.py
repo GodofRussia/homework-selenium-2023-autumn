@@ -124,11 +124,6 @@ class CenterOfCommercePage(BasePage):
     def find_product_by_title(self, text, timeout=None) -> WebElement:
         return self.find_h2_with_text(text, timeout)
 
-    def find_products_checkboxes(self, timeout=None) -> List[WebElement]:
-        return self.multiple_find(
-            self.locators.PRODUCTS_CHECKBOX_INPUTS, timeout
-        )
-
     def find_product_by_id(self, product_id, timeout=None) -> WebElement:
         return self.find(self.locators.PRODUCT_ID_SVG(product_id), timeout)
     
@@ -252,9 +247,6 @@ class CenterOfCommercePage(BasePage):
     def click_on_sort_products(self, timeout=None) -> WebElement:
         self.hover_on_element(self.locators.PRODUCT_TABLE_HEADER, timeout)
         return self.click(self.locators.SORT_INDICATOR_PRODUCT, timeout)
-
-    def click_products_checkbox(self, timeout=None):
-        self.click(self.locators.PRODUCTS_CHECKBOX_INPUTS, timeout)
 
     def click_on_warning_button(self, timeout=None):
         self.click(self.locators.WARNING_SVG, timeout)
