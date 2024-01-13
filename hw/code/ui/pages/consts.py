@@ -1,3 +1,6 @@
+from collections.abc import Mapping
+from typing import NamedTuple
+
 SCROLL_INTO_VIEW_JS_SCRIPT = "arguments[0].scrollIntoView(true);"
 CHECKED_JS_SCRIPT = "return arguments[0].checked"
 
@@ -53,14 +56,42 @@ class CatalogPeriods:
     FOUR_HOURS = "4 hours"
     EIGHT_HOURS = "8 hours"
 
+class NoSuchCatalogTabException(Exception):
+    pass
 
-class CatalogTabs:
+class CatalogTabs(Mapping):
     PRODUCTS = "Товары"
     GROUPS = "Группы"
     DIAGNOSTIC = "Диагностика"
     EVENTS = "События"
     DOWNLOADS_HISTORY = "История загрузок"
 
+    def __class_getitem__(cls, catalog):
+        match catalog:
+            case CatalogTabs.PRODUCTS:
+                return "tab_catalogs.catalogMain"
+            case CatalogTabs.GROUPS:
+                return "tab_catalogs.catalogMain.catalogGroups"
+            case CatalogTabs.EVENTS:
+                return "tab_catalogs.catalogMain.catalogEvents"
+            case CatalogTabs.DOWNLOADS_HISTORY:
+                return "tab_catalogs.catalogMain.catalogHistory"
+            case CatalogTabs.DIAGNOSTIC:
+                return "tab_catalogs.catalogMain.catalogDiagnostics"
+            case _:
+                raise NoSuchCatalogTabException()
+
+class Product(NamedTuple):
+    product_id: int
+    title: str
+
+CosmeticProducts = [Product(8005304, "Тени для век Glam Look матовые, палетка"), 
+                    Product(8008361, "Лак для ногтей GEL SHINE перламутровый"),
+                    Product(8699561, "Подарочный набор декоративной косметики Beauty Box №6"),
+                    Product(8013293, "Жидкость для снятия лака без ацетона с витамином F"),
+                    Product(8008361, "Лак для ногтей GEL SHINE перламутровый")]
+
+TopCosmeticProduct = Product(8002726, "Лак для ногтей GEL SHINE перламутровый")
 
 PRODUCTS_TAB_ID = "tab_catalogs.catalogMain"
 

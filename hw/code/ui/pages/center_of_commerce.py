@@ -34,6 +34,8 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoAlertPresentException
 
+class NoSuchPeriodException(Exception):
+    pass
 
 class CenterOfCommercePage(BasePage):
     url = "https://ads.vk.com/hq/ecomm/catalogs"
@@ -49,6 +51,9 @@ class CenterOfCommercePage(BasePage):
 
     def find_necessary_field_error(self, element=DIV, timeout=None):
         return self.find_with_text(element, REQUIRED_FIELD, timeout)
+    
+    def find_necessary_field_error_while_creation(self, timeout=None):
+        return self.find_necessary_field_error(DIV, timeout)
 
     def find_incorrect_marketplace_url_error(self, timeout=None):
         return self.find_with_text(
@@ -105,7 +110,7 @@ class CenterOfCommercePage(BasePage):
     def find_promote_title(self, timeout=None) -> WebElement:
         return self.find(self.locators.COMPANY_SETTING, timeout)
 
-    def find_product_by_title(self, title, timeout=None) -> WebElement:
+    def find_product_widget_by_title(self, title, timeout=None) -> WebElement:
         return self.find_with_text_and_class(SPAN, title, TITLE_CLASS, timeout)
 
     def find_table_settings_title(self, timeout=None) -> WebElement:
@@ -115,6 +120,9 @@ class CenterOfCommercePage(BasePage):
 
     def find_h2_with_text(self, text, timeout=None) -> WebElement:
         return self.find(self.locators.H2_WITH_TEXT(text), timeout)
+    
+    def find_product_by_title(self, text, timeout=None) -> WebElement:
+        return self.find_h2_with_text(text, timeout)
 
     def find_products_checkboxes(self, timeout=None) -> List[WebElement]:
         return self.multiple_find(
@@ -123,6 +131,11 @@ class CenterOfCommercePage(BasePage):
 
     def find_product_by_id(self, product_id, timeout=None) -> WebElement:
         return self.find(self.locators.PRODUCT_ID_SVG(product_id), timeout)
+    
+    def find_catalog_by_title(self, title, timeout=None):
+        return self.find_element_with_text(
+                "span", title, timeout
+        )
 
     def redirect_to_products_and_find_checkbox_select_products(
         self, timeout=None
@@ -143,6 +156,24 @@ class CenterOfCommercePage(BasePage):
                 self.driver.navigate().refresh()
 
         return element
+
+    def _period_selector(self, catalog):
+        match catalog:
+            case self.PERIODS.EVERYDAY:
+                return "Ежедневно"
+            case self.PERIODS.ONE_HOUR:
+                return "1 час"
+            case self.PERIODS.FOUR_HOURS:
+                return "4 часа"
+            case self.PERIODS.EIGHT_HOURS:
+                return "8 часов"
+            case _:
+                raise NoSuchPeriodException()
+
+    def find_by_period(self, period, timeout=None):
+        return self.find_with_text(
+            "span", self._period_selector(period), timeout
+        )
 
     # fill methods
 
@@ -279,10 +310,10 @@ class CenterOfCommercePage(BasePage):
     def search_catalog(self, query, timeout=None):
         self.search(self.locators.SEARCH_CATALOG_FIELD, query, timeout)
 
-    def search_product(self, query, timeout=None):
+    def search_product(self, product_id: int, timeout=None):
         self.search(
             self.locators.SEARCH_CATALOG_BY_CLASS(SEARCH_PRODUCT_CLASS),
-            query,
+            str(product_id),
             timeout,
         )
 
@@ -332,10 +363,10 @@ class CenterOfCommercePage(BasePage):
             SPAN, title, CONTENT_CLASS, timeout
         )
 
-    def switch_catalog_tab(self, tab_id, timeout=None) -> WebElement:
+    def switch_catalog_tab(self, tab, timeout=None) -> WebElement:
         # check tab by id, if start tab don't switch
-        if tab_id != PRODUCTS_TAB_ID:
-            return self.click(self.locators.TAB_BY_ID(tab_id), timeout)
+        # if tab_id != PRODUCTS_TAB_ID:
+        return self.click(self.locators.TAB_BY_ID(self.CATALOG_TABS[tab]), timeout)
 
     def check_catalog_tab_switched(self, tab, timeout=None) -> bool:
         match tab:
@@ -390,7 +421,10 @@ class CenterOfCommercePage(BasePage):
         link = self.find_link_with_href(
             CENTER_OF_COMMERCE_VK_PRODUCT_HREF, timeout
         )
-        self.driver.get(link.get_attribute(HREF))
+        attribute = link.get_attribute(HREF)
+        assert attribute
+
+        self.driver.get(attribute)
         try:
             alert = self.driver.switch_to.alert
             alert.accept()
@@ -403,6 +437,15 @@ class CenterOfCommercePage(BasePage):
         self.open()
 
         return found_title
+    
+    def check_utm_hover(self, timeout):
+        utm_label_class = self.hover_on_utm_label(
+            timeout
+        ).get_attribute("class")
+
+        assert utm_label_class
+
+        return "vkuiTappable--hover-background" in utm_label_class
 
     def remove_catalog_by_title(self, title, timeout=None):
         self.hover_on_catalog_cell(title, timeout)

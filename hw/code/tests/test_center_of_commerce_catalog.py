@@ -7,6 +7,8 @@ from ui.fixtures import download_directory
 from ui.pages.center_of_commerce import CenterOfCommercePage
 from time import gmtime, strftime
 
+from ui.pages.consts import CatalogTabs, CosmeticProducts, Product, TopCosmeticProduct
+
 TIMEOUT = 30
 PRODUCTS_LOADING_TIMEOUT = 150
 strftime("%Y-%m-%d %H:%M:%S", gmtime())
@@ -70,35 +72,21 @@ class TestCenterOfCommerceCatalog(BaseCase):
         )
 
     @pytest.mark.parametrize(
-        "catalog, tab, tab_id",
+        "catalog, tab",
         [
-            ("Тачки", "Товары", "tab_catalogs.catalogMain"),
-            ("Тачки", "Группы", "tab_catalogs.catalogMain.catalogGroups"),
+            ("Тачки", CatalogTabs.PRODUCTS),
+            ("Тачки", CatalogTabs.GROUPS),
+            ("Тачки", CatalogTabs.DIAGNOSTIC),
+            ("Тачки", CatalogTabs.EVENTS),
+            ("Тачки", CatalogTabs.DOWNLOADS_HISTORY),
+            ("Товары – fff",CatalogTabs.DOWNLOADS_HISTORY),
             (
-                "Тачки",
-                "Диагностика",
-                "tab_catalogs.catalogMain.catalogDiagnostics",
-            ),
-            ("Тачки", "События", "tab_catalogs.catalogMain.catalogEvents"),
-            (
-                "Тачки",
-                "История загрузок",
-                "tab_catalogs.catalogMain.catalogHistory",
+                "Товары – fff",
+                CatalogTabs.DIAGNOSTIC
             ),
             (
                 "Товары – fff",
-                "История загрузок",
-                "tab_catalogs.catalogMain.catalogHistory",
-            ),
-            (
-                "Товары – fff",
-                "Диагностика",
-                "tab_catalogs.catalogMain.catalogDiagnostics",
-            ),
-            (
-                "Товары – fff",
-                "События",
-                "tab_catalogs.catalogMain.catalogEvents",
+                CatalogTabs.EVENTS,
             ),
         ],
     )
@@ -106,12 +94,11 @@ class TestCenterOfCommerceCatalog(BaseCase):
         self,
         catalog,
         tab,
-        tab_id,
         center_of_commerce_page: CenterOfCommercePage,
         cookies_and_local_storage,
     ):
         center_of_commerce_page.go_to_catalog(catalog, TIMEOUT)
-        center_of_commerce_page.switch_catalog_tab(tab_id, TIMEOUT)
+        center_of_commerce_page.switch_catalog_tab(tab, TIMEOUT)
 
         assert (
             center_of_commerce_page.check_catalog_tab_switched(tab, TIMEOUT)
@@ -121,19 +108,19 @@ class TestCenterOfCommerceCatalog(BaseCase):
     @pytest.mark.parametrize(
         "catalog, tab_id",
         [
-            ("Тачки", "tab_catalogs.catalogMain"),
-            ("Товары – fff", "tab_catalogs.catalogMain"),
+            ("Тачки", CatalogTabs.PRODUCTS),
+            ("Товары – fff", CatalogTabs.PRODUCTS),
         ],
     )
     def test_catalog_products_promote_works(
         self,
         catalog,
-        tab_id,
+        tab,
         center_of_commerce_page: CenterOfCommercePage,
         cookies_and_local_storage,
     ):
         center_of_commerce_page.go_to_catalog(catalog, TIMEOUT)
-        center_of_commerce_page.switch_catalog_tab(tab_id, TIMEOUT)
+        center_of_commerce_page.switch_catalog_tab(tab, TIMEOUT)
         center_of_commerce_page.click_on_promote_button(TIMEOUT)
 
         assert center_of_commerce_page.find_promote_title(TIMEOUT) is not None
@@ -143,29 +130,26 @@ class TestCenterOfCommerceCatalog(BaseCase):
         [
             (
                 "Товары – fff",
-                "8005304",
-                "Тени для век Glam Look матовые, палетка",
+                CosmeticProducts[0],
             ),
             (
                 "Товары – fff",
-                "8008361",
-                "Лак для ногтей GEL SHINE перламутровый",
+                CosmeticProducts[4],
             ),
         ],
     )
     def test_catalog_products_search(
         self,
         catalog,
-        product_id,
-        title,
+        product: Product,
         center_of_commerce_page: CenterOfCommercePage,
         cookies_and_local_storage,
     ):
         center_of_commerce_page.go_to_catalog(catalog, TIMEOUT)
-        center_of_commerce_page.search_product(product_id, TIMEOUT)
+        center_of_commerce_page.search_product(product.product_id, TIMEOUT)
 
         assert (
-            center_of_commerce_page.find_product_by_title(title, TIMEOUT)
+            center_of_commerce_page.find_product_by_title(product.title, TIMEOUT)
             is not None
         )
 
@@ -185,75 +169,69 @@ class TestCenterOfCommerceCatalog(BaseCase):
         )
 
     @pytest.mark.parametrize(
-        "catalog, product, product_id",
+        "catalog, product",
         [
             (
                 "Товары – fff",
-                "Подарочный набор декоративной косметики Beauty Box №6",
-                "8699561",
+               CosmeticProducts[0]
             ),
             (
                 "Товары – fff",
-                "Жидкость для снятия лака без ацетона с витамином F",
-                "8013293",
+                CosmeticProducts[1]
             ),
         ],
     )
     def test_catalog_product_widget(
         self,
         catalog,
-        product,
-        product_id,
+        product: Product,
         center_of_commerce_page: CenterOfCommercePage,
         cookies_and_local_storage,
     ):
         center_of_commerce_page.go_to_catalog(catalog, TIMEOUT)
         center_of_commerce_page.go_to_catalog_product(
-            product_id, product, TIMEOUT
+            product.product_id, product.title, TIMEOUT
         )
 
         assert (
-            center_of_commerce_page.find_h2_with_text(product, TIMEOUT)
+            center_of_commerce_page.find_product_widget_by_title(product.title, TIMEOUT)
             is not None
         )
 
     @pytest.mark.parametrize(
-        "catalog, product, product_id",
+        "catalog, product",
         [
             (
                 "Товары – fff",
-                "Подарочный набор декоративной косметики Beauty Box №6",
-                "8699561",
+                CosmeticProducts[2],
             ),
             (
                 "Товары – fff",
-                "Жидкость для снятия лака без ацетона с витамином F",
-                "8013293",
+                CosmeticProducts[3],
             ),
         ],
     )
     def test_catalog_product_vklink(
         self,
         catalog,
-        product,
-        product_id,
+        product: Product,
         center_of_commerce_page: CenterOfCommercePage,
         cookies_and_local_storage,
     ):
         center_of_commerce_page.go_to_catalog(catalog, TIMEOUT)
         center_of_commerce_page.go_to_catalog_product(
-            product_id, product, TIMEOUT
+            product.product_id, product.title, TIMEOUT
         )
 
-        assert center_of_commerce_page.check_vk_product_found(product, TIMEOUT)
+        assert center_of_commerce_page.check_vk_product_found(product.title, TIMEOUT)
 
     @pytest.mark.parametrize(
-        "catalog, product_id", [("Товары – fff", "8002726")]
+        "catalog, product", [("Товары – fff", TopCosmeticProduct)]
     )
     def test_catalog_product_sort(
         self,
         catalog,
-        product_id,
+        product: Product,
         center_of_commerce_page: CenterOfCommercePage,
         cookies_and_local_storage,
     ):
@@ -261,7 +239,7 @@ class TestCenterOfCommerceCatalog(BaseCase):
         center_of_commerce_page.click_on_sort_products(TIMEOUT)
 
         assert (
-            center_of_commerce_page.find_product_by_id(product_id, TIMEOUT)
+            center_of_commerce_page.find_product_by_id(product.product_id, TIMEOUT)
             is not None
         )
 
