@@ -9,7 +9,7 @@ class CenterOfCommerceLocators:
     )
     CATALOG_CREATE_BUTTON = (
         By.XPATH,
-        '//button[@title="Создать каталог"]/span/span',
+        '//button[@title="Создать каталог"]',
     )
 
     # catalogs page
@@ -134,7 +134,7 @@ class CenterOfCommerceLocators:
     )
     PRODUCTS_TABLE_SETTINGS_BUTTON = (
         By.XPATH,
-        '//div[contains(@class, "Toolbar_tableSettings__KhdOD")]/div/button',
+        '//button[contains(@class, "TableSettings_settingsButton__uz8xK")]',
     )
     H2_WITH_TEXT = lambda text: (By.XPATH, f'//h2[text() = "{text}"]')
     H1_WITH_TEXT = lambda text: (By.XPATH, f'//h1[text() = "{text}"]')
@@ -146,10 +146,6 @@ class CenterOfCommerceLocators:
         By.XPATH,
         '//div[contains(@class, "BaseTable__header-cell")]/div/*',
     )
-    PRODUCTS_CHECKBOX_INPUTS = (
-        By.XPATH,
-        '//div[contains(@class, "BaseTable__table-frozen-left")]/div/div/div/div/div/input',
-    )
     SORT_INDICATOR_PRODUCT = (
         By.XPATH,
         '//div[contains(.,"Товар")]/div[contains(@class, "BaseTable__sort-indicator")]',
@@ -159,4 +155,12 @@ class CenterOfCommerceLocators:
     PRODUCT_ID_SVG = lambda product_id: (
         By.XPATH,
         f'//span[contains(text(), "{product_id}")]',
+    )
+    CATALOG_CELL = lambda title: (
+        By.XPATH,
+        f'//div[contains(@class, "CatalogsTable_item__1fpKp") and contains(., "{title}")]',
+    )
+    CATALOG_CELL_MORE_ACTIONS = (
+        By.XPATH,
+        '//button[contains(@data-test-id, "catalog-item-menu")]',
     )

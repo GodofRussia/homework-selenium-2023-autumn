@@ -1,0 +1,4 @@
+ID,"Destination ID","Origin ID","Destination name","Origin name","Flight description","Image URL","Final URL","Flight price","Sale Price"
+1,"ABA","MOW","Абакан","Москва","Москва - Абакан","https://www.jz.eng.br/wp-content/themes/temajs/img/instagram/insta1.png","http://siteforyandex.com/01","10000 RUB","15000 RUB"
+2,"PAR","MOW","Париж","Москва","Москва - Париж","https://github.com/voron-cage/feeds/raw/master/flights/sj-100.jpeg","http://siteforyandex.com/02","15000 RUB","20000 RUB"
+3,"NYC","MOW","Нью Йорк","Москва","Москва - Нью-Йорк","https://github.com/voron-cage/feeds/raw/master/flights/sj-100.jpeg","http://siteforyandex.com/03","22000 AMD","30000 AMD"

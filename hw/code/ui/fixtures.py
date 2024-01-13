@@ -44,7 +44,6 @@ def download_directory():
     return download_dir
 
 
-# TODO
 @pytest.fixture(scope="session", autouse=True)
 def mock_files():
     upload_dir = "mock_files"

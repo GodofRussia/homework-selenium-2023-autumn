@@ -68,7 +68,6 @@ class BasePage(object):
         self.driver = driver
         self.logger = logging.getLogger(__name__)
         self.open()
-        # self.is_opened()
 
     # wait for timeout. Default timeout 5
     def wait(self, timeout=None):

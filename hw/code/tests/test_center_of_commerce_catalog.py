@@ -8,24 +8,26 @@ from ui.pages.center_of_commerce import CenterOfCommercePage
 from time import gmtime, strftime
 
 TIMEOUT = 30
+PRODUCTS_LOADING_TIMEOUT = 150
 strftime("%Y-%m-%d %H:%M:%S", gmtime())
 
 
 class TestCenterOfCommerceCatalog(BaseCase):
     authorize = True
 
-    # TODO: fix files
     @pytest.mark.parametrize(
-        "tab, second_field",
+        "tab, second_field, title",
         [
-            ("feed", "https://vk.com/luxvisage_cosmetics"),
-            ("manual", "catalog_products.csv"),
+            ("feed", "https://vk.com/luxvisage_cosmetics", "fff"),
+            ("feed", "https://vk.com/market-204475787", "dddsdsd"),
+            ("manual", "catalog_products.csv", "Тачки"),
         ],
     )
     def test_catalog_creation_works(
         self,
         tab,
         second_field,
+        title,
         center_of_commerce_page: CenterOfCommercePage,
         cookies_and_local_storage,
         mock_files,
@@ -36,11 +38,18 @@ class TestCenterOfCommerceCatalog(BaseCase):
         center_of_commerce_page.go_to_create_catalog(
             tab,
             second_field,
+            title,
             TIMEOUT,
         )
         center_of_commerce_page.create_catalog_finish(TIMEOUT)
 
         assert center_of_commerce_page.find_catalog_tabs(TIMEOUT) is not None
+        assert (
+            center_of_commerce_page.redirect_to_products_and_find_checkbox_select_products(
+                PRODUCTS_LOADING_TIMEOUT
+            )
+            is not None
+        )
 
     @pytest.mark.parametrize(
         "from_what, to",
@@ -271,4 +280,18 @@ class TestCenterOfCommerceCatalog(BaseCase):
 
         assert center_of_commerce_page.check_catalog_tab_switched(
             redirected_tab, TIMEOUT
+        )
+
+    @pytest.mark.parametrize(
+        "catalog_title",
+        ["Товары – fff", "Товары – dddsdsd", "Тачки"],
+    )
+    def remove_catalogs_works(
+        self,
+        catalog_title,
+        center_of_commerce_page: CenterOfCommercePage,
+        cookies_and_local_storage,
+    ):
+        assert center_of_commerce_page.remove_catalog_by_title(
+            catalog_title, TIMEOUT
         )
