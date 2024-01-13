@@ -125,22 +125,27 @@ class CenterOfCommercePage(BasePage):
         return self.find(self.locators.PRODUCT_ID_SVG(product_id), timeout)
 
     def redirect_to_products_and_find_checkbox_select_products(
-        self, timeout=None
+        self, timeout, short_timeout=None
     ) -> WebElement:
-        self.click(self.locators.TAB_BY_ID(PRODUCTS_TAB_ID), timeout)
+        self.click(self.locators.TAB_BY_ID(PRODUCTS_TAB_ID), short_timeout)
         return self.find_element_with_refresh(
-            self.locators.PRODUCTS_SELECT_ALL_CHECKBOX_SVG
+            self.locators.PRODUCTS_SELECT_ALL_CHECKBOX_SVG,
+            timeout,
+            short_timeout,
         )
 
-    def find_element_with_refresh(self, locator, timeout=None) -> WebElement:
-        elementFound = False
+    def find_element_with_refresh(
+        self, locator, timeout, short_timeout=None
+    ) -> WebElement:
+        element_found = False
         element = {}
-        while elementFound is False:
+        while timeout > 0 and element_found is False:
             try:
-                element = self.find(locator, timeout)
-                elementFound = True
+                element = self.find(locator, short_timeout)
+                element_found = True
             except TimeoutException:
-                self.driver.navigate().refresh()
+                self.driver.refresh()
+                timeout -= short_timeout if short_timeout is not None else 5
 
         return element
 
@@ -256,8 +261,6 @@ class CenterOfCommercePage(BasePage):
                 self.go_to_create_feed_catalog(timeout)
                 self.fill_url_input(second_field)
                 self.fill_title_input(title, timeout)
-                # TODO выпилиить sleep
-                time.sleep(2)
             case self.TABS.MARKETPLACE:
                 self.go_to_create_marketplace_catalog(timeout)
                 self.fill_url_input(second_field)
@@ -304,7 +307,7 @@ class CenterOfCommercePage(BasePage):
             self.click(self.locators.CATALOG_CATEGORY(category), timeout)
 
     def create_catalog_finish(self, timeout=None):
-        self.click(self.locators.CATALOG_CREATE_BUTTON, timeout=timeout)
+        self.slow_click(self.locators.CATALOG_CREATE_BUTTON, 2, timeout)
 
     def check_clear_utm_checkbox_is_checked(self, timeout=None) -> bool:
         return self.is_checkbox_checked(
@@ -405,9 +408,13 @@ class CenterOfCommercePage(BasePage):
         return found_title
 
     def remove_catalog_by_title(self, title, timeout=None):
-        self.hover_on_catalog_cell(title, timeout)
-        self.click(self.locators.CATALOG_CELL_MORE_ACTIONS, timeout)
+        self.search_catalog(title, timeout)
+        element = self.hover_on_catalog_cell(title, timeout)
+        new_element = element.find_element(
+            self.locators.CATALOG_CELL_MORE_ACTIONS[0],
+            self.locators.CATALOG_CELL_MORE_ACTIONS[1],
+        )
+        self.action_click(new_element)
         self.click_element_with_text(SPAN, "Удалить каталог")
-        self.click_element_with_text(SPAN, "Удалить")
 
-        return True
+        return self.click_element_with_text(SPAN, "Удалить")

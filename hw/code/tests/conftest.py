@@ -10,6 +10,7 @@ from ui.fixtures import (
     lk_page,
     company_page,
     center_of_commerce_page,
+    center_of_commerce_page_session,
     new_company_page,
     group_adv_page,
     adv_page,

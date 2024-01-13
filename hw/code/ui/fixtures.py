@@ -203,6 +203,11 @@ def center_of_commerce_page(driver):
     return CenterOfCommercePage(driver=driver)
 
 
+@pytest.fixture(scope="session")
+def center_of_commerce_page_session(driver):
+    return CenterOfCommercePage(driver=driver)
+
+
 @pytest.fixture
 def new_company_page(driver):
     return NewCompanyPage(driver=driver)

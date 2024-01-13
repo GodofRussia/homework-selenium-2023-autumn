@@ -8,6 +8,7 @@ from ui.pages.center_of_commerce import CenterOfCommercePage
 from time import gmtime, strftime
 
 TIMEOUT = 30
+SHORT_TIMEOUT = 5
 PRODUCTS_LOADING_TIMEOUT = 150
 strftime("%Y-%m-%d %H:%M:%S", gmtime())
 
@@ -15,45 +16,72 @@ strftime("%Y-%m-%d %H:%M:%S", gmtime())
 class TestCenterOfCommerceCatalog(BaseCase):
     authorize = True
 
-    @pytest.mark.parametrize(
-        "tab, second_field, title",
-        [
+    @pytest.fixture(scope="session")
+    def catalogs_fixture(
+        self,
+        mock_files,
+        center_of_commerce_page_session: CenterOfCommercePage,
+        cookies_and_local_storage,
+    ):
+        center_of_commerce_page_session.set_cookie(cookies_and_local_storage)
+        catalog_paramertries = [
             ("feed", "https://vk.com/luxvisage_cosmetics", "fff"),
             ("feed", "https://vk.com/market-204475787", "dddsdsd"),
-            ("manual", "catalog_products.csv", "Тачки"),
-        ],
-    )
-    def test_catalog_creation_works(
-        self,
-        tab,
-        second_field,
-        title,
-        center_of_commerce_page: CenterOfCommercePage,
-        cookies_and_local_storage,
-        mock_files,
-    ):
-        if tab == center_of_commerce_page.TABS.MANUAL:
-            second_field = os.path.join(mock_files, second_field)
+            ("feed", "https://vk.com/voentorg_chipok", "Тачки"),
+        ]
 
-        center_of_commerce_page.go_to_create_catalog(
-            tab,
-            second_field,
-            title,
-            TIMEOUT,
-        )
-        center_of_commerce_page.create_catalog_finish(TIMEOUT)
+        for catalog_params in catalog_paramertries:
+            second_field = catalog_params[1]
+            if (
+                catalog_params[0]
+                == center_of_commerce_page_session.TABS.MANUAL
+            ):
+                second_field = os.path.join(mock_files, catalog_params[1])
 
-        assert center_of_commerce_page.find_catalog_tabs(TIMEOUT) is not None
-        assert (
-            center_of_commerce_page.redirect_to_products_and_find_checkbox_select_products(
-                PRODUCTS_LOADING_TIMEOUT
+            center_of_commerce_page_session.go_to_create_catalog(
+                catalog_params[0],
+                second_field,
+                catalog_params[2],
+                TIMEOUT,
             )
-            is not None
+            center_of_commerce_page_session.create_catalog_finish(TIMEOUT)
+
+            assert (
+                center_of_commerce_page_session.find_catalog_tabs(TIMEOUT)
+                is not None
+            )
+            assert (
+                center_of_commerce_page_session.redirect_to_products_and_find_checkbox_select_products(
+                    PRODUCTS_LOADING_TIMEOUT, SHORT_TIMEOUT
+                )
+                is not None
+            )
+
+            center_of_commerce_page_session = CenterOfCommercePage(
+                center_of_commerce_page_session.driver
+            )
+
+        yield
+
+        center_of_commerce_page_session = CenterOfCommercePage(
+            center_of_commerce_page_session.driver
         )
+
+        for catalog_params in catalog_paramertries:
+            assert center_of_commerce_page_session.remove_catalog_by_title(
+                "Товары – " + catalog_params[2], TIMEOUT
+            )
+
+            center_of_commerce_page_session = CenterOfCommercePage(
+                center_of_commerce_page_session.driver
+            )
 
     @pytest.mark.parametrize(
         "from_what, to",
-        [("Товары – fff", "Товары – dddsdsd"), ("Тачки", "Товары – fff")],
+        [
+            ("Товары – fff", "Товары – dddsdsd"),
+            ("Товары – Тачки", "Товары – fff"),
+        ],
     )
     def test_catalog_category_switch_works(
         self,
@@ -61,6 +89,7 @@ class TestCenterOfCommerceCatalog(BaseCase):
         to,
         center_of_commerce_page: CenterOfCommercePage,
         cookies_and_local_storage,
+        catalogs_fixture,
     ):
         center_of_commerce_page.go_to_catalog(from_what, TIMEOUT)
         center_of_commerce_page.switch_catalog(to, TIMEOUT)
@@ -72,16 +101,24 @@ class TestCenterOfCommerceCatalog(BaseCase):
     @pytest.mark.parametrize(
         "catalog, tab, tab_id",
         [
-            ("Тачки", "Товары", "tab_catalogs.catalogMain"),
-            ("Тачки", "Группы", "tab_catalogs.catalogMain.catalogGroups"),
+            ("Товары – Тачки", "Товары", "tab_catalogs.catalogMain"),
             (
-                "Тачки",
+                "Товары – Тачки",
+                "Группы",
+                "tab_catalogs.catalogMain.catalogGroups",
+            ),
+            (
+                "Товары – Тачки",
                 "Диагностика",
                 "tab_catalogs.catalogMain.catalogDiagnostics",
             ),
-            ("Тачки", "События", "tab_catalogs.catalogMain.catalogEvents"),
             (
-                "Тачки",
+                "Товары – Тачки",
+                "События",
+                "tab_catalogs.catalogMain.catalogEvents",
+            ),
+            (
+                "Товары – Тачки",
                 "История загрузок",
                 "tab_catalogs.catalogMain.catalogHistory",
             ),
@@ -109,6 +146,7 @@ class TestCenterOfCommerceCatalog(BaseCase):
         tab_id,
         center_of_commerce_page: CenterOfCommercePage,
         cookies_and_local_storage,
+        catalogs_fixture,
     ):
         center_of_commerce_page.go_to_catalog(catalog, TIMEOUT)
         center_of_commerce_page.switch_catalog_tab(tab_id, TIMEOUT)
@@ -121,7 +159,7 @@ class TestCenterOfCommerceCatalog(BaseCase):
     @pytest.mark.parametrize(
         "catalog, tab_id",
         [
-            ("Тачки", "tab_catalogs.catalogMain"),
+            ("Товары – Тачки", "tab_catalogs.catalogMain"),
             ("Товары – fff", "tab_catalogs.catalogMain"),
         ],
     )
@@ -131,6 +169,7 @@ class TestCenterOfCommerceCatalog(BaseCase):
         tab_id,
         center_of_commerce_page: CenterOfCommercePage,
         cookies_and_local_storage,
+        catalogs_fixture,
     ):
         center_of_commerce_page.go_to_catalog(catalog, TIMEOUT)
         center_of_commerce_page.switch_catalog_tab(tab_id, TIMEOUT)
@@ -160,6 +199,7 @@ class TestCenterOfCommerceCatalog(BaseCase):
         title,
         center_of_commerce_page: CenterOfCommercePage,
         cookies_and_local_storage,
+        catalogs_fixture,
     ):
         center_of_commerce_page.go_to_catalog(catalog, TIMEOUT)
         center_of_commerce_page.search_product(product_id, TIMEOUT)
@@ -169,12 +209,13 @@ class TestCenterOfCommerceCatalog(BaseCase):
             is not None
         )
 
-    @pytest.mark.parametrize("catalog", ["Товары – fff", "Тачки"])
+    @pytest.mark.parametrize("catalog", ["Товары – fff", "Товары – Тачки"])
     def test_catalog_products_table_settings_widget(
         self,
         catalog,
         center_of_commerce_page: CenterOfCommercePage,
         cookies_and_local_storage,
+        catalogs_fixture,
     ):
         center_of_commerce_page.go_to_catalog(catalog, TIMEOUT)
         center_of_commerce_page.click_product_table_settings(TIMEOUT)
@@ -194,8 +235,8 @@ class TestCenterOfCommerceCatalog(BaseCase):
             ),
             (
                 "Товары – fff",
-                "Жидкость для снятия лака без ацетона с витамином F",
-                "8013293",
+                "Спрей для фиксации макияжа праймер",
+                "8005906",
             ),
         ],
     )
@@ -206,6 +247,7 @@ class TestCenterOfCommerceCatalog(BaseCase):
         product_id,
         center_of_commerce_page: CenterOfCommercePage,
         cookies_and_local_storage,
+        catalogs_fixture,
     ):
         center_of_commerce_page.go_to_catalog(catalog, TIMEOUT)
         center_of_commerce_page.go_to_catalog_product(
@@ -227,8 +269,8 @@ class TestCenterOfCommerceCatalog(BaseCase):
             ),
             (
                 "Товары – fff",
-                "Жидкость для снятия лака без ацетона с витамином F",
-                "8013293",
+                "Спрей для фиксации макияжа праймер",
+                "8005906",
             ),
         ],
     )
@@ -239,6 +281,7 @@ class TestCenterOfCommerceCatalog(BaseCase):
         product_id,
         center_of_commerce_page: CenterOfCommercePage,
         cookies_and_local_storage,
+        catalogs_fixture,
     ):
         center_of_commerce_page.go_to_catalog(catalog, TIMEOUT)
         center_of_commerce_page.go_to_catalog_product(
@@ -274,24 +317,11 @@ class TestCenterOfCommerceCatalog(BaseCase):
         redirected_tab,
         center_of_commerce_page: CenterOfCommercePage,
         cookies_and_local_storage,
+        catalogs_fixture,
     ):
         center_of_commerce_page.go_to_catalog(catalog, TIMEOUT)
         center_of_commerce_page.click_on_warning_button(TIMEOUT)
 
         assert center_of_commerce_page.check_catalog_tab_switched(
             redirected_tab, TIMEOUT
-        )
-
-    @pytest.mark.parametrize(
-        "catalog_title",
-        ["Товары – fff", "Товары – dddsdsd", "Тачки"],
-    )
-    def remove_catalogs_works(
-        self,
-        catalog_title,
-        center_of_commerce_page: CenterOfCommercePage,
-        cookies_and_local_storage,
-    ):
-        assert center_of_commerce_page.remove_catalog_by_title(
-            catalog_title, TIMEOUT
         )

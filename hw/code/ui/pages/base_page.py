@@ -6,6 +6,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from ui.locators import basic
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from pytest import FixtureRequest
 
 from ui.pages.consts import (
     AUTH_COOKIE_NAME,
@@ -18,6 +19,8 @@ from selenium.webdriver.common.action_chains import ActionChains
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.chrome.webdriver import WebDriver as ChromeWebDriver
 from selenium.webdriver.firefox.webdriver import WebDriver as FireFoxWebDriver
+from selenium.common.exceptions import NoAlertPresentException
+
 
 from contextlib import contextmanager
 
@@ -184,14 +187,37 @@ class BasePage(object):
         elem.send_keys(Keys.BACKSPACE)
 
     def search(self, search_locator, query, timeout=None):
-        elem = self.find(search_locator, timeout)
-        elem.send_keys(query)
+        try:
+            elem = self.find(search_locator, timeout)
+            elem.send_keys(query)
+        except TimeoutException:
+            pass
 
     # Search for element by locator and click on it
     def click(self, locator, timeout=None) -> WebElement:
         elem = self.wait(timeout).until(EC.element_to_be_clickable(locator))
         elem.click()
         return elem
+
+    def slow_click(self, locator, fast_timeout, slow_timeout=5):
+        def wait_handler(element):
+            try:
+                WebDriverWait(self.driver, fast_timeout).until(
+                    EC.element_to_be_clickable(
+                        self.basic_locators.BANNER_BUTTON
+                    )
+                )
+                return True
+            except TimeoutException:
+                element.click()
+                return True
+
+        element = self.find(locator, slow_timeout)
+        WebDriverWait(self.driver, slow_timeout).until(
+            lambda _: wait_handler(element)
+        )
+
+        return element
 
     def click_element(self, element, timeout=None):
         self.wait(timeout).until(EC.element_to_be_clickable(element)).click()
@@ -273,3 +299,25 @@ class BasePage(object):
         yield
 
         self.wait(timeout).until(EC.number_of_windows_to_be(tabs_num + 1))
+
+    def set_cookie(self, cookies):
+        self.driver.delete_all_cookies()
+
+        current_url = self.url
+        main_page = BasePage(self.driver)
+
+        # try:
+        #     alert = self.driver.switch_to.alert
+        #     alert.accept()
+        # except NoAlertPresentException:
+        #     pass
+        for key, value in cookies[1]:
+            self.driver.execute_script(
+                f"localStorage.setItem('{key}', '{value}');"
+            )
+
+        for cookie in cookies[0]:
+            self.driver.add_cookie(cookie)
+
+        self.driver.get(current_url)
+        print(self.driver.get_cookies())

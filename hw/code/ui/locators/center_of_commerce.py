@@ -162,5 +162,5 @@ class CenterOfCommerceLocators:
     )
     CATALOG_CELL_MORE_ACTIONS = (
         By.XPATH,
-        '//button[contains(@data-test-id, "catalog-item-menu")]',
+        '//div[contains(@class, "CatalogsTable_itemMenu__KkH-1")]',
     )
