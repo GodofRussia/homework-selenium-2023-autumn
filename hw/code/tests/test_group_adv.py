@@ -64,9 +64,7 @@ class TestGroup(BaseCase):
         group_adv_page.click_interest_region().click_key_phrases()
         group_adv_page.wait_key_phrase_render()
         group_adv_page.send_key_phrases(INPUT_TEXT.key_phrase_text)
-        group_adv_page.send_keys_phrases_minus(
-            INPUT_TEXT.key_phrase_text
-        )
+        group_adv_page.send_keys_phrases_minus(INPUT_TEXT.key_phrase_text)
 
         assert group_adv_page.is_on_site_text(ERR_TEXT.duplication_err)
 

@@ -34,11 +34,10 @@ class TestSite(BaseCase):
 
     def test_valid_input(self, teardown_checkbox: SitePage):
         teardown_checkbox.input_collection_data(
-            INPUT_TEXT.incorrect_input_collection_data)
-
-        assert teardown_checkbox.is_error_on_page(
-            ERR_TEXT.incorrect_value_err
+            INPUT_TEXT.incorrect_input_collection_data
         )
+
+        assert teardown_checkbox.is_error_on_page(ERR_TEXT.incorrect_value_err)
 
     def test_click_events(self, create_pixel_go_settings: SitePage):
         site_page = create_pixel_go_settings
@@ -78,12 +77,9 @@ class TestSite(BaseCase):
         site_page.input_event_name(INPUT_TEXT.string_256_symbols)
         site_page.select_event_category().select_event_condition()
 
-        site_page.input_text_url(
-            URLS.domen_vk_link).click_add_event_modal()
+        site_page.input_text_url(URLS.domen_vk_link).click_add_event_modal()
 
-        assert site_page.is_on_site_text(
-            ERR_TEXT.len_err_site
-        )
+        assert site_page.is_on_site_text(ERR_TEXT.len_err_site)
 
     def test_click_tags_name(self, create_pixel_go_settings: SitePage):
         site_page = create_pixel_go_settings

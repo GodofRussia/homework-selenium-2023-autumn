@@ -6,7 +6,7 @@ from ui.pages.consts import (
     PLACE,
     POSITIONS_GROUP,
     URLS,
-    WaitTime
+    WaitTime,
 )
 
 from ui.pages.consts import GROUP_ADV_INVALID_UTM
@@ -54,7 +54,8 @@ class GroupAdvPage(BasePage):
 
     def select_bottom_age(self, age: int):
         el = self.multiple_find(self.locators.AGE_FIELD)[
-            POSITIONS_GROUP.bottom_age]
+            POSITIONS_GROUP.bottom_age
+        ]
 
         self.action_click_not_clickable(el)
         el.send_keys(age, Keys.RETURN)
@@ -63,7 +64,8 @@ class GroupAdvPage(BasePage):
 
     def select_upper_age(self, age: int):
         el = self.multiple_find(locator=self.locators.AGE_FIELD)[
-            POSITIONS_GROUP.upper_age]
+            POSITIONS_GROUP.upper_age
+        ]
         self.action_click_not_clickable(el)
         el.send_keys(age, Keys.RETURN)
 
@@ -71,37 +73,43 @@ class GroupAdvPage(BasePage):
 
     def get_upper_age(self):
         el = self.multiple_find(self.locators.AGE_FIELD)[
-            POSITIONS_GROUP.upper_age]
+            POSITIONS_GROUP.upper_age
+        ]
         return el.get_attribute("value")
 
     def get_lower_age(self):
         el = self.multiple_find(self.locators.AGE_FIELD)[
-            POSITIONS_GROUP.bottom_age]
+            POSITIONS_GROUP.bottom_age
+        ]
         return el.get_attribute("value")
 
     def click_continue_button(self):
         self.search_action_click_not_clickable(
-            self.locators.FOOTER_BUTTONS,
-            POSITIONS_GROUP.continue_btn
+            self.locators.FOOTER_BUTTONS, POSITIONS_GROUP.continue_btn
         )
 
         return self
 
     def wait_load_page(self):
         self.search_action_click_not_clickable(
-            self.locators.SAVE_TEXT, POSITIONS_GROUP.save_btn, WaitTime.SUPER_LONG_WAIT)
+            self.locators.SAVE_TEXT,
+            POSITIONS_GROUP.save_btn,
+            WaitTime.SUPER_LONG_WAIT,
+        )
         return self
 
     def click_interest_region(self, timeout=WaitTime.MEDIUM_WAIT):
         self.search_action_click_not_clickable(
             self.locators.INTEREST_REGION,
             POSITIONS_GROUP.interest_region,
-            timeout)
+            timeout,
+        )
         return self
 
     def click_key_phrases(self, timeout=WaitTime.MEDIUM_WAIT):
         self.search_action_click_not_clickable(
-            locator=self.locators.KEY_PHRASES, timeout=timeout)
+            locator=self.locators.KEY_PHRASES, timeout=timeout
+        )
 
         return self
 
@@ -129,7 +137,8 @@ class GroupAdvPage(BasePage):
 
     def remove_device(self, what_device: int):
         self.search_action_click_not_clickable(
-            self.locators.DEVICES_OPTIONS, what_device)
+            self.locators.DEVICES_OPTIONS, what_device
+        )
         return self
 
     def is_disabled_and_checked_device(self, what_device: int):
@@ -142,12 +151,14 @@ class GroupAdvPage(BasePage):
 
     def click_url_region(self):
         self.search_action_click_not_clickable(
-            self.locators.URL_PARAMETER_REGION)
+            self.locators.URL_PARAMETER_REGION
+        )
         return self
 
     def select_utm(self):
         self.search_action_click(
-            self.locators.URL_OPTIONS, POSITIONS_GROUP.utm)
+            self.locators.URL_OPTIONS, POSITIONS_GROUP.utm
+        )
         return self
 
     def send_text_url(self, text: str):
@@ -159,8 +170,8 @@ class GroupAdvPage(BasePage):
     def is_checkbox_checked(self):
         try:
             el = self.multiple_find(
-                self.locators.URL_CHECBOXES,
-                WaitTime.SHORT_WAIT)[POSITIONS_GROUP.checkbox]
+                self.locators.URL_CHECBOXES, WaitTime.SHORT_WAIT
+            )[POSITIONS_GROUP.checkbox]
 
             return el.get_attribute("checked")
         except TimeoutException:
@@ -170,7 +181,8 @@ class GroupAdvPage(BasePage):
 
     def wait_for_checkbox_load(self):
         self.wait(WaitTime.SHORT_WAIT).until(
-            lambda _: self.is_checkbox_checked())
+            lambda _: self.is_checkbox_checked()
+        )
 
         return self
 
@@ -178,7 +190,8 @@ class GroupAdvPage(BasePage):
         try:
             el = self.wait(WaitTime.SUPER_SHORT_WAIT).until(
                 EC.visibility_of_all_elements_located(
-                    self.locators.URL_OPTIONS)
+                    self.locators.URL_OPTIONS
+                )
             )
 
             return (
@@ -190,8 +203,7 @@ class GroupAdvPage(BasePage):
         return False
 
     def wait_for_utm_render(self):
-        self.wait(WaitTime.SHORT_WAIT).until(
-            lambda _: self._is_utm_renders())
+        self.wait(WaitTime.SHORT_WAIT).until(lambda _: self._is_utm_renders())
 
         return self
 
@@ -206,7 +218,8 @@ class GroupAdvPage(BasePage):
         try:
             self.action_click(filter_btn)
             self.wait(WaitTime.SUPER_SHORT_WAIT).until(
-                lambda _: self.is_on_site_text(LABELS.preview))
+                lambda _: self.is_on_site_text(LABELS.preview)
+            )
 
             return True
         except TimeoutException:
@@ -217,7 +230,8 @@ class GroupAdvPage(BasePage):
     def _is_region_visible(self):
         try:
             el = self.multiple_find(self.locators.KEY_PHRASES_REGION)[
-                POSITIONS_GROUP.key_phrase_minus_input]
+                POSITIONS_GROUP.key_phrase_minus_input
+            ]
 
             return el.get_attribute("aria-hidden").lower() == "false"
         except TimeoutException:
@@ -227,15 +241,18 @@ class GroupAdvPage(BasePage):
 
     def wait_key_phrase_render(self):
         self.wait(WaitTime.MEDIUM_WAIT).until(
-            lambda _: self._is_region_visible())
+            lambda _: self._is_region_visible()
+        )
 
         return self
 
     def click_until_next_page(self):
         btn_to_click = self.multiple_find(self.locators.CONTINUE_BUTTON)[
-            BASE_POSITIONS.last_search_pos]
+            BASE_POSITIONS.last_search_pos
+        ]
 
         self.wait(WaitTime.SUPER_LONG_WAIT).until(
-            lambda _: self.wait_for_adv_page(btn_to_click))
+            lambda _: self.wait_for_adv_page(btn_to_click)
+        )
 
         return self

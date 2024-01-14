@@ -94,7 +94,8 @@ class LeadPage(BasePage):
 
     def wait_for_modal_dissappear(self):
         self.wait(WaitTime.MEDIUM_WAIT).until_not(
-            EC.presence_of_element_located(self.locators.MODAL))
+            EC.presence_of_element_located(self.locators.MODAL)
+        )
         return self
 
     def _wait_until_func_true(self, func, timeout=WaitTime.LONG_WAIT):
@@ -109,12 +110,14 @@ class LeadPage(BasePage):
             self.search_action_click(self.locators.SELECTORS, 1)
             self.search_action_click(self.locators.DELETE_LABELS)
 
-            delete_button = self.multiple_find(self.locators.MODAL_BUTTONS)[  # type: ignore
-                POSITIONS_SITE.delete_modal_btn]
+            delete_button = self.multiple_find(self.locators.MODAL_BUTTONS)[
+                POSITIONS_SITE.delete_modal_btn
+            ]
             self.action_click(delete_button)
 
             self.wait(WaitTime.MEDIUM_WAIT).until(
-                EC.staleness_of(delete_button))
+                EC.staleness_of(delete_button)
+            )
         except TimeoutException:
             pass
 

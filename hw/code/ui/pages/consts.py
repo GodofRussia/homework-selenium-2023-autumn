@@ -58,8 +58,10 @@ class CatalogPeriods:
     FOUR_HOURS = "4 hours"
     EIGHT_HOURS = "8 hours"
 
+
 class NoSuchCatalogTabException(Exception):
     pass
+
 
 class CatalogTabs(Mapping):
     PRODUCTS = "Товары"
@@ -83,32 +85,51 @@ class CatalogTabs(Mapping):
             case _:
                 raise NoSuchCatalogTabException()
 
+
 PRODUCTS_TAB_ID = "tab_catalogs.catalogMain"
 
 CATALOG_TITLE_PREFIX = "Товары – "
+
 
 class Catalog(NamedTuple):
     tab: str
     url: str
     title: str
 
-CatalogsToBeCreated: List[Catalog] = [Catalog(tab, url, title) for tab, url, title in [
-    (CenterOfCommerceTabs.FEED, "https://vk.com/luxvisage_cosmetics", "fff"),
-    (CenterOfCommerceTabs.FEED, "https://vk.com/market-204475787", "dddsdsd"),
-    (CenterOfCommerceTabs.FEED, "https://vk.com/voentorg_chipok", "Тачки"),
-]]
+
+CatalogsToBeCreated: List[Catalog] = [
+    Catalog(tab, url, title)
+    for tab, url, title in [
+        (
+            CenterOfCommerceTabs.FEED,
+            "https://vk.com/luxvisage_cosmetics",
+            "fff",
+        ),
+        (
+            CenterOfCommerceTabs.FEED,
+            "https://vk.com/market-204475787",
+            "dddsdsd",
+        ),
+        (CenterOfCommerceTabs.FEED, "https://vk.com/voentorg_chipok", "Тачки"),
+    ]
+]
+
 
 class Product(NamedTuple):
     product_id: int
     title: str
 
-CosmeticProducts = [Product(8005304, "Тени для век Glam Look матовые, палетка"), 
-                    Product(8008361, "Лак для ногтей GEL SHINE перламутровый"),
-                    Product(8699561, "Подарочный набор декоративной косметики Beauty Box №6"),
-                    Product(8013293, "Жидкость для снятия лака без ацетона с витамином F"),
-                    Product(8008361, "Лак для ногтей GEL SHINE перламутровый")]
+
+CosmeticProducts = [
+    Product(8005304, "Тени для век Glam Look матовые, палетка"),
+    Product(8008361, "Лак для ногтей GEL SHINE перламутровый"),
+    Product(8699561, "Подарочный набор декоративной косметики Beauty Box №6"),
+    Product(8013293, "Жидкость для снятия лака без ацетона с витамином F"),
+    Product(8008361, "Лак для ногтей GEL SHINE перламутровый"),
+]
 
 TopCosmeticProduct = Product(8002726, "Лак для ногтей GEL SHINE перламутровый")
+
 
 class MarketPlaceApiInput:
     TOKEN = "Введите токен для доступа к API"
@@ -150,6 +171,8 @@ class SidebarTabsTitles:
     LEAD_FORMS = "Лид-формы"
     SETTINGS = "Настройки"
     HELP = "Помощь"
+
+
 PLACE = "Россия"
 
 
@@ -257,7 +280,7 @@ class INPUT_TEXT:
     big_value_for_days = 10
     small_value_for_days = 5
 
-    string_256_symbols = "a"*256
+    string_256_symbols = "a" * 256
 
     min_period = 1
     less_than_min_period = 0
@@ -289,7 +312,7 @@ class LABELS:
 
     nothing_found = "Ничего не нашлось"
     create_first = "Создайте первую рекламную кампанию"
-    show_regions = 'Регионы показа'
+    show_regions = "Регионы показа"
     pixel_found = "Нашли пиксели"
 
     preview = "Предпросмотр"

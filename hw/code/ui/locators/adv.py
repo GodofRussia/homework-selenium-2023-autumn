@@ -80,6 +80,8 @@ class AdvLocators(BasePageLocators):
     CLOSE_MODAL = (By.XPATH, '//button[@aria-label="Close"]')
 
     MODAL_WIN = (
-        By.XPATH, '//*[contains(@class, "vkuiModalCardBase__container")]')
+        By.XPATH,
+        '//*[contains(@class, "vkuiModalCardBase__container")]',
+    )
 
     FILTER_BUTTON = (By.XPATH, '//*[@data-testid="filter-button"]')

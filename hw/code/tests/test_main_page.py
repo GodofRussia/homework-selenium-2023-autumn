@@ -11,4 +11,6 @@ class TestMainPage(BaseCase):
 
         main_page.click_on_know_more()
 
-        assert main_page.contains_any_word(banner_words), "new page doesnt contain words from banner"
+        assert main_page.contains_any_word(
+            banner_words
+        ), "new page doesnt contain words from banner"

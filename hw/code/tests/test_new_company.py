@@ -21,7 +21,8 @@ class TestNewCompany(BaseCase):
 
     def test_min_value_cost(self, fill_site_field: NewCompanyPage):
         fill_site_field.send_cost(
-            INPUT_TEXT.less_than_need_cost).continue_click()
+            INPUT_TEXT.less_than_need_cost
+        ).continue_click()
 
         assert fill_site_field.is_less_than_hundred()
 
@@ -33,8 +34,7 @@ class TestNewCompany(BaseCase):
     def test_empty_pred_cost(self, fill_site_field: NewCompanyPage):
         fill_site_field.click_selector_strategy().select_pred_cost()
         fill_site_field.send_cost(INPUT_TEXT.corrected_cost)
-        fill_site_field.send_max_click_cost(
-            INPUT_TEXT.empty_value)
+        fill_site_field.send_max_click_cost(INPUT_TEXT.empty_value)
         fill_site_field.continue_click()
 
         assert fill_site_field.is_must_field()

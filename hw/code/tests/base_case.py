@@ -27,7 +27,7 @@ class BaseCase:
             raise SwithToWindowException("only one window")
 
         current = self.driver.current_window_handle
-        
+
         for w in self.driver.window_handles:
             if w != current:
                 self.driver.switch_to.window(w)

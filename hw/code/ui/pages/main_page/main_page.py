@@ -104,15 +104,13 @@ class MainPage(BasePage):
             )
         )
 
-        action = (
-            ActionChains(self.driver)
-            .move_to_element(dropdown)
-            .click()
-        )
+        action = ActionChains(self.driver).move_to_element(dropdown).click()
         action.perform()
 
-        elem = self.find(self.basic_locators.ELEMENT_WITH_TEXT_AND_CLASS(
-                    "*", header, Navigation
-        ))
+        elem = self.find(
+            self.basic_locators.ELEMENT_WITH_TEXT_AND_CLASS(
+                "*", header, Navigation
+            )
+        )
 
         self.action_click(elem)

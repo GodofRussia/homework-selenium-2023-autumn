@@ -72,7 +72,9 @@ class SiteLocators(BasePageLocators):
     DELETE_OPTION = (By.XPATH, '//*[@data-testid="dropdown-item"]')
 
     MODAL_BUTTONS = (
-        By.XPATH, '//*[contains(@class, "vkuiModalCardBase__actions")]//button')
+        By.XPATH,
+        '//*[contains(@class, "vkuiModalCardBase__actions")]//button',
+    )
 
     PIXEL_ID = (By.XPATH, '//*[contains(text(),"Создан ID")]')
 

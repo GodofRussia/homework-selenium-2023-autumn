@@ -4,12 +4,7 @@ from ui.locators.adv import AdvLocators
 from ui.pages.base_page import BasePage
 from ui.pages.group_adv_page import GroupAdvPage
 
-from ui.pages.consts import (
-    URLS,
-    WaitTime,
-    BASE_POSITIONS,
-    POSITIONS_ADV
-)
+from ui.pages.consts import URLS, WaitTime, BASE_POSITIONS, POSITIONS_ADV
 
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
@@ -28,19 +23,22 @@ class AdvPage(BasePage):
 
     def click_continue_button(self):
         self.search_action_click(
-            self.locators.FOOTER_BUTTONS, POSITIONS_ADV.continue_button)
+            self.locators.FOOTER_BUTTONS, POSITIONS_ADV.continue_button
+        )
         return self
 
     def send_text_to_title(self, text: str):
         el = self.multiple_find(self.locators.INPUT_TITLE)[
-            POSITIONS_ADV.title_position]
+            POSITIONS_ADV.title_position
+        ]
         self.send_keys_with_enter(el, text)
 
         return self
 
     def get_title_max(self) -> int:
         el = self.multiple_find(self.locators.COUNTS_CHARS)[
-            POSITIONS_ADV.title_position]
+            POSITIONS_ADV.title_position
+        ]
         text = el.text
 
         matches = re.search(r"\d+ / (\d+)", text)
@@ -58,14 +56,15 @@ class AdvPage(BasePage):
 
     def wait_logo_dissapper(self):
         el = self.multiple_find(self.locators.LOG_VARIANTS)[
-            BASE_POSITIONS.first_search_pos]
+            BASE_POSITIONS.first_search_pos
+        ]
 
-        self.wait(WaitTime.SUPER_SHORT_WAIT).until(
-            EC.staleness_of(el))
+        self.wait(WaitTime.SUPER_SHORT_WAIT).until(EC.staleness_of(el))
         return self
 
-    def select_logo(self,
-                    number_of_logo: int = BASE_POSITIONS.first_search_pos):
+    def select_logo(
+        self, number_of_logo: int = BASE_POSITIONS.first_search_pos
+    ):
         self.search_action_click(self.locators.LOGO_INPUT)
         self.search_action_click(self.locators.LOG_VARIANTS, number_of_logo)
 
@@ -115,14 +114,19 @@ class AdvPage(BasePage):
         return self
 
     def wait_for_only_one_upload_field(self):
-        return len(self.multiple_find(
-            self.locators.CHOOSE_MEDIA,
-            WaitTime.SUPER_SHORT_WAIT)
-        ) == 1
+        return (
+            len(
+                self.multiple_find(
+                    self.locators.CHOOSE_MEDIA, WaitTime.SUPER_SHORT_WAIT
+                )
+            )
+            == 1
+        )
 
     def click_media_upload(self):
         self.wait(WaitTime.SUPER_LONG_WAIT).until(
-            lambda _: self.wait_for_only_one_upload_field())
+            lambda _: self.wait_for_only_one_upload_field()
+        )
         self.click(self.locators.CHOOSE_MEDIA)
         return self
 
@@ -136,7 +140,8 @@ class AdvPage(BasePage):
 
     def upload_logo(self, file):
         self.search_action_click(
-            locator=self.locators.LOGO_INPUT, timeout=WaitTime.LONG_WAIT)
+            locator=self.locators.LOGO_INPUT, timeout=WaitTime.LONG_WAIT
+        )
 
         file_input = self.find(self.locators.LOGO_INPUT_FILE)
         file_input.send_keys(file)
@@ -161,13 +166,14 @@ class AdvPage(BasePage):
     def click_continue_until_modal(self):
         self.wait(timeout=WaitTime.LONG_WAIT).until(
             lambda _: self.wait_for_modal(
-                self.locators.FOOTER_BUTTONS,
-                BASE_POSITIONS.last_search_pos)
+                self.locators.FOOTER_BUTTONS, BASE_POSITIONS.last_search_pos
+            )
         )
 
         return self
 
     def wait_load_upload_modal(self):
         self.wait(timeout=WaitTime.MEDIUM_WAIT).until(
-            EC.visibility_of_all_elements_located(self.locators.MEDIA_OPTIONS))
+            EC.visibility_of_all_elements_located(self.locators.MEDIA_OPTIONS)
+        )
         return self

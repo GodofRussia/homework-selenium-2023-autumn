@@ -6,7 +6,11 @@ from time import gmtime, strftime
 import os
 from selenium.common.exceptions import TimeoutException
 
-from ui.pages.consts import CatalogPeriods, CenterOfCommerceTabs as TABS, MarketPlaceApiInput
+from ui.pages.consts import (
+    CatalogPeriods,
+    CenterOfCommerceTabs as TABS,
+    MarketPlaceApiInput,
+)
 
 TIMEOUT = 30
 
@@ -39,7 +43,9 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
         center_of_commerce_page.create_catalog_finish(TIMEOUT)
 
         assert (
-            center_of_commerce_page.find_necessary_field_error_while_creation(TIMEOUT)
+            center_of_commerce_page.find_necessary_field_error_while_creation(
+                TIMEOUT
+            )
             is not None
         )
 
@@ -59,9 +65,7 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
         center_of_commerce_page.create_catalog_finish(TIMEOUT)
 
         assert (
-            center_of_commerce_page.find_necessary_field_error(
-                tab, TIMEOUT
-            )
+            center_of_commerce_page.find_necessary_field_error(tab, TIMEOUT)
             is not None
         )
 
@@ -103,8 +107,7 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
         center_of_commerce_page.set_refresh_period(period, TIMEOUT)
 
         assert (
-            center_of_commerce_page.find_by_period(period, TIMEOUT)
-            is not None
+            center_of_commerce_page.find_by_period(period, TIMEOUT) is not None
         )
 
     @pytest.mark.parametrize(
@@ -247,9 +250,7 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
         center_of_commerce_page.go_to_create_marketplace_catalog(TIMEOUT)
         center_of_commerce_page.fill_url_input(url, TIMEOUT)
         center_of_commerce_page.fill_client_id_input(client_id, TIMEOUT)
-        center_of_commerce_page.fill_api_key_input(
-            input_type, apikey, TIMEOUT
-        )
+        center_of_commerce_page.fill_api_key_input(input_type, apikey, TIMEOUT)
         center_of_commerce_page.create_catalog_finish(TIMEOUT)
 
         assert (
@@ -299,9 +300,7 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
         center_of_commerce_page.go_to_create_marketplace_catalog(TIMEOUT)
         center_of_commerce_page.fill_url_input(url, TIMEOUT)
         center_of_commerce_page.fill_client_id_input(client_id, TIMEOUT)
-        center_of_commerce_page.fill_api_key_input(
-           input_type, apikey, TIMEOUT
-        )
+        center_of_commerce_page.fill_api_key_input(input_type, apikey, TIMEOUT)
         center_of_commerce_page.create_catalog_finish(TIMEOUT)
 
         assert (
@@ -367,7 +366,9 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
 
         file_path = os.path.join(download_directory, file_path)
 
-        existence = center_of_commerce_page.wait_for_file_to_download(file_path)
+        existence = center_of_commerce_page.wait_for_file_to_download(
+            file_path
+        )
 
         os.remove(file_path)
 

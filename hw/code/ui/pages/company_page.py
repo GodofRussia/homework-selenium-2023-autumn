@@ -5,7 +5,7 @@ from ui.pages.consts import (
     CLASSES,
     URLS,
     WaitTime,
-    get_count_string
+    get_count_string,
 )
 
 from ui.pages.base_page import BasePage
@@ -37,12 +37,14 @@ class CompanyPage(BasePage):
 
     def download(self, timeout=None):
         self.search_action_click_not_clickable(
-            self.locators.DOWNLOAD_BUTTON, 0, timeout)
+            self.locators.DOWNLOAD_BUTTON, 0, timeout
+        )
         return self
 
     def settings(self, timeout=None):
         self.search_action_click_not_clickable(
-            self.locators.SETTINGS_BUTTON, timeout=timeout)
+            self.locators.SETTINGS_BUTTON, timeout=timeout
+        )
         return self
 
     def advertisment_view(self, timeout=None):
@@ -67,7 +69,10 @@ class CompanyPage(BasePage):
 
     def select_company(self, number_of_company=0):
         self.search_action_click_not_clickable(
-            self.locators.COMPANY_OPTIONS, number_of_company, WaitTime.SUPER_LONG_WAIT)
+            self.locators.COMPANY_OPTIONS,
+            number_of_company,
+            WaitTime.SUPER_LONG_WAIT,
+        )
         return self
 
     def is_action_active(self):
@@ -77,7 +82,8 @@ class CompanyPage(BasePage):
 
     def select_action_list(self):
         self.wait(timeout=WaitTime.LONG_WAIT).until(
-            lambda _: self.is_action_active())
+            lambda _: self.is_action_active()
+        )
         self.search_action_click_not_clickable(self.locators.ACTION_SELECTOR)
         return self
 
@@ -99,7 +105,8 @@ class CompanyPage(BasePage):
 
     def select_draft_option(self):
         el = self.multiple_find(self.locators.DRAFT_OPTIONS)[
-            BASE_POSITIONS.first_search_pos]
+            BASE_POSITIONS.first_search_pos
+        ]
         self.click(self.locators.DRAFT_OPTIONS)
 
         return el
@@ -109,8 +116,9 @@ class CompanyPage(BasePage):
         return self
 
     def get_selector_attribute(self):
-        return self.find(
-            locator=self.locators.ACTION_SELECTOR).get_attribute("class")
+        return self.find(locator=self.locators.ACTION_SELECTOR).get_attribute(
+            "class"
+        )
 
     def click_approve_delete(self):
         self.search_action_click_not_clickable(self.locators.DELETE_MODAL)
@@ -138,27 +146,21 @@ class CompanyPage(BasePage):
     def filter_click(self):
         filter_btn = self.find(self.locators.FILTER_BUTTON)
         self.wait(WaitTime.LONG_WAIT).until(
-            lambda _: self.wait_for_dropdown_filter(filter_btn))
+            lambda _: self.wait_for_dropdown_filter(filter_btn)
+        )
 
         return self
 
     def is_ad_plan(self):
-        return self.is_matching_link(
-            self.driver.current_url,
-            URLS.ad_plan_url
-        )
+        return self.is_matching_link(self.driver.current_url, URLS.ad_plan_url)
 
     def is_ad_groups(self):
         return self.is_matching_link(
-            self.driver.current_url,
-            URLS.ad_groups_url
+            self.driver.current_url, URLS.ad_groups_url
         )
 
     def is_advertisment(self):
-        return self.is_matching_link(
-            self.driver.current_url,
-            URLS.ads_url
-        )
+        return self.is_matching_link(self.driver.current_url, URLS.ads_url)
 
     def selector_has_not_pop_down(self):
         return CLASSES.pop_down not in str(self.get_selector_attribute())
@@ -194,15 +196,15 @@ class CompanyPage(BasePage):
 
         self.wait(WaitTime.LONG_WAIT).until_not(
             EC.presence_of_all_elements_located(
-                self.locators.COMPANY_NUMBER_PLACE)
+                self.locators.COMPANY_NUMBER_PLACE
+            )
         )
 
         return self
 
     def get_company_numbers(self):
-        el = self.find(
-            self.locators.COMPANY_NUMBER_PLACE)
-        match = re.search(r'\d+', el.text)
+        el = self.find(self.locators.COMPANY_NUMBER_PLACE)
+        match = re.search(r"\d+", el.text)
 
         if match:
             return int(match.group())
@@ -210,7 +212,8 @@ class CompanyPage(BasePage):
         return 0
 
     def _wait_until_company_changes(self, previous_company_number):
-        self.is_on_site_text(get_count_string(
-            previous_company_number), WaitTime.LONG_WAIT)
+        self.is_on_site_text(
+            get_count_string(previous_company_number), WaitTime.LONG_WAIT
+        )
 
         return self

@@ -83,19 +83,29 @@ class AudienceLocators(BasePageLocators):
     )
 
     DELETE_ICON = (
-        By.XPATH, '//div[contains(@class, "SourceListItem_sourceListItem")]//div[contains(@class, "Header_buttons")]//*[name()="svg"]')
+        By.XPATH,
+        '//div[contains(@class, "SourceListItem_sourceListItem")]//div[contains(@class, "Header_buttons")]//*[name()="svg"]',
+    )
 
     CONFRIM_BUTTONS = (
-        By.XPATH, '//*[contains(@class, "ModalConfirm")]//button')
+        By.XPATH,
+        '//*[contains(@class, "ModalConfirm")]//button',
+    )
 
     FILTER_DROPDOWN_EXIST = (
-        By.XPATH, '//div[contains(@class, "Filter_wrapper")]')
+        By.XPATH,
+        '//div[contains(@class, "Filter_wrapper")]',
+    )
 
     MORE_OPTIONS = (By.XPATH, '//div[@role="table"]//button')
     DELETE_OPTION = (By.XPATH, '//*[@data-testid="dropdown-item"]')
 
     MODAL_BUTTONS = (
-        By.XPATH, '//*[contains(@class, "ModalConfirm_wrapper")]//button')
+        By.XPATH,
+        '//*[contains(@class, "ModalConfirm_wrapper")]//button',
+    )
 
     GRID_IDS = (
-        By.XPATH, '//*[contains(@role,"gridcell")]//*[contains(@class,"BaseTable__row-cell-text")]')
+        By.XPATH,
+        '//*[contains(@role,"gridcell")]//*[contains(@class,"BaseTable__row-cell-text")]',
+    )

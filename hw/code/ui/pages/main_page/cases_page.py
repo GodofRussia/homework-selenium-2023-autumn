@@ -5,4 +5,3 @@ from ui.locators.main import MainPageLocators
 class CasesPage(BasePage):
     url = "https://ads.vk.com/cases"
     locators = MainPageLocators
-

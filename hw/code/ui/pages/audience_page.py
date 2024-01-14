@@ -1,6 +1,9 @@
 from ui.pages.base_page import BasePage
 
-from ui.pages.consts import AUDIENCE_USER_LIST_URL as USER_LIST_URL, POSITIONS_SITE
+from ui.pages.consts import (
+    AUDIENCE_USER_LIST_URL as USER_LIST_URL,
+    POSITIONS_SITE,
+)
 
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
@@ -49,8 +52,9 @@ class AudiencePage(BasePage):
         self.search_action_click(self.locators.LEAD_OPTIONS, what_option)
         return self
 
-    def click_checkbox_lead(self,
-                            what_checkbox=BASE_POSITIONS.first_search_pos):
+    def click_checkbox_lead(
+        self, what_checkbox=BASE_POSITIONS.first_search_pos
+    ):
         self.search_action_click(self.locators.LEAD_CHECKBOXES, what_checkbox)
         return self
 
@@ -59,7 +63,8 @@ class AudiencePage(BasePage):
         from_input = input[POSITIONS_AUDIENCE.from_input_days]
 
         self.remove_symbols_from_el(
-            from_input, len(str(self.get_from_value())))
+            from_input, len(str(self.get_from_value()))
+        )
         self.send_keys_with_enter(from_input, form_days)
         return self
 
@@ -75,7 +80,8 @@ class AudiencePage(BasePage):
         input = self.multiple_find(self.locators.LEAD_INPUT_DAYS)
 
         value = input[POSITIONS_AUDIENCE.from_input_days].get_attribute(
-            "value")
+            "value"
+        )
         assert value is not None
         return int(value)
 
@@ -94,7 +100,8 @@ class AudiencePage(BasePage):
         period_field = self.find(self.locators.KEY_DAYS_PERIOD)
 
         self.remove_symbols_from_el(
-            period_field, len(str(self.get_period_value())))
+            period_field, len(str(self.get_period_value()))
+        )
 
         self.send_keys_with_enter(period_field, period)
 
@@ -109,14 +116,16 @@ class AudiencePage(BasePage):
 
     def is_modal_exist(self):
         try:
-            el = self.multiple_find(self.locators.SAVE_BUTTON,
-                                    WaitTime.SUPER_SHORT_WAIT)
+            el = self.multiple_find(
+                self.locators.SAVE_BUTTON, WaitTime.SUPER_SHORT_WAIT
+            )
 
             if not el:
                 return True
             try:
                 self.search_action_click_not_clickable(
-                    self.locators.SAVE_BUTTON)
+                    self.locators.SAVE_BUTTON
+                )
             except (TimeoutException, JavascriptException) as e:
                 pass
 
@@ -128,7 +137,8 @@ class AudiencePage(BasePage):
 
     def click_save_button(self):
         self._wait_until_func_true(
-            lambda _: self.is_modal_exist(), WaitTime.SUPER_LONG_WAIT)
+            lambda _: self.is_modal_exist(), WaitTime.SUPER_LONG_WAIT
+        )
         return self
 
     def click_save_button_without_wait(self):
@@ -137,12 +147,14 @@ class AudiencePage(BasePage):
 
     def click_save_button_modal(self):
         self.search_action_click(
-            self.locators.SAVE_BUTTON, POSITIONS_AUDIENCE.save_button_modal)
+            self.locators.SAVE_BUTTON, POSITIONS_AUDIENCE.save_button_modal
+        )
         return self
 
     def click_user_list(self):
         self.search_action_click(
-            self.locators.USER_LIST, POSITIONS_AUDIENCE.user_list)
+            self.locators.USER_LIST, POSITIONS_AUDIENCE.user_list
+        )
         return
 
     def is_user_list_url(self) -> bool:
@@ -150,8 +162,7 @@ class AudiencePage(BasePage):
 
     def select_vk_group_region(self):
         self.search_action_click(
-            self.locators.VK_GROUP_REGION,
-            timeout=WaitTime.SUPER_LONG_WAIT
+            self.locators.VK_GROUP_REGION, timeout=WaitTime.SUPER_LONG_WAIT
         )
 
         return self
@@ -165,12 +176,10 @@ class AudiencePage(BasePage):
 
     def select_vk_group(self):
         self.search_action_click(
-            self.locators.VK_GROUPS,
-            timeout=WaitTime.SUPER_LONG_WAIT
+            self.locators.VK_GROUPS, timeout=WaitTime.SUPER_LONG_WAIT
         )
         self.search_action_click(
-            self.locators.VK_GROUPS_OPTIONS,
-            timeout=WaitTime.SUPER_LONG_WAIT
+            self.locators.VK_GROUPS_OPTIONS, timeout=WaitTime.SUPER_LONG_WAIT
         )
 
         self.empty_click()
@@ -200,11 +209,12 @@ class AudiencePage(BasePage):
         )
 
         self.click_until_confirm_show(
-            self.locators.DELETE_ICON, POSITIONS_AUDIENCE.delete_source_btn)
+            self.locators.DELETE_ICON, POSITIONS_AUDIENCE.delete_source_btn
+        )
 
         self.search_action_click(
             self.locators.CONFRIM_BUTTONS,
-            POSITIONS_AUDIENCE.delete_confirm_btn
+            POSITIONS_AUDIENCE.delete_confirm_btn,
         )
 
         self.wait_for_confirm_box_dissappear()
@@ -213,7 +223,8 @@ class AudiencePage(BasePage):
     def is_confirm(self, locator, position):
         try:
             self.search_action_click(
-                locator, position, WaitTime.SUPER_SHORT_WAIT)
+                locator, position, WaitTime.SUPER_SHORT_WAIT
+            )
 
             return self.find(self.locators.CONFRIM_BUTTONS)
         except TimeoutException:
@@ -223,14 +234,16 @@ class AudiencePage(BasePage):
 
     def click_until_confirm_show(self, locator, position):
         self._wait_until_func_true(
-            lambda _: self.is_confirm(locator, position))
+            lambda _: self.is_confirm(locator, position)
+        )
         return self
 
     def wait_for_dropdown_filter(self, filter_btn) -> bool:
         try:
             self.action_click(filter_btn)
-            self.find(self.locators.FILTER_DROPDOWN_EXIST,
-                      WaitTime.SUPER_SHORT_WAIT)
+            self.find(
+                self.locators.FILTER_DROPDOWN_EXIST, WaitTime.SUPER_SHORT_WAIT
+            )
 
             return True
         except TimeoutException:
@@ -240,9 +253,11 @@ class AudiencePage(BasePage):
 
     def filter_click(self):
         filter_btn = self.multiple_find(self.locators.FILTER_BUTTON)[
-            POSITIONS_AUDIENCE.filter_btn]
+            POSITIONS_AUDIENCE.filter_btn
+        ]
         self.wait(WaitTime.LONG_WAIT).until(
-            lambda _: self.wait_for_dropdown_filter(filter_btn))
+            lambda _: self.wait_for_dropdown_filter(filter_btn)
+        )
 
         return self
 
@@ -271,26 +286,28 @@ class AudiencePage(BasePage):
         self._wait_until_value_equal(
             self.locators.LEAD_INPUT_DAYS,
             POSITIONS_AUDIENCE.from_input_days,
-            value)
+            value,
+        )
         return self
 
     def wait_from_filed_equal(self, value):
         self._wait_until_value_equal(
             self.locators.LEAD_INPUT_DAYS,
             POSITIONS_AUDIENCE.to_input_days,
-            value)
+            value,
+        )
         return self
 
     def wait_period_filed_equal(self, value):
         self._wait_until_value_equal(
-            self.locators.KEY_DAYS_PERIOD,
-            POSITIONS_AUDIENCE.period_pos,
-            value)
+            self.locators.KEY_DAYS_PERIOD, POSITIONS_AUDIENCE.period_pos, value
+        )
         return self
 
     def wait_for_confirm_box_dissappear(self):
         self.wait(WaitTime.LONG_WAIT).until_not(
-            EC.presence_of_all_elements_located(self.locators.CONFRIM_BUTTONS))
+            EC.presence_of_all_elements_located(self.locators.CONFRIM_BUTTONS)
+        )
         return self
 
     def delete_all_auditories(self):
@@ -303,14 +320,17 @@ class AudiencePage(BasePage):
                 self.search_action_click(
                     self.locators.DELETE_OPTION,
                     POSITIONS_AUDIENCE.delete_btn_pop_up,
-                    WaitTime.SHORT_WAIT)
+                    WaitTime.SHORT_WAIT,
+                )
 
                 delete_button = self.multiple_find(self.locators.MODAL_BUTTONS)[  # type: ignore
-                    POSITIONS_SITE.delete_modal_btn]
+                    POSITIONS_SITE.delete_modal_btn
+                ]
                 self.action_click(delete_button)
 
                 self.wait(WaitTime.MEDIUM_WAIT).until(
-                    EC.staleness_of(delete_button))
+                    EC.staleness_of(delete_button)
+                )
                 self.wait(WaitTime.LONG_WAIT).until(EC.staleness_of(grid_id))
             except TimeoutException:
                 break

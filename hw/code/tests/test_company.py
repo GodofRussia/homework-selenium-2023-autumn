@@ -63,7 +63,8 @@ class TestCompany(BaseCase):
     def test_select_company_downloads(self, setup_filter: CompanyPage):
         setup_filter.select_company().download()
         assert setup_filter.is_on_site_text(
-            LABELS.date_sum, WaitTime.MEDIUM_WAIT)
+            LABELS.date_sum, WaitTime.MEDIUM_WAIT
+        )
 
     @pytest.fixture
     def create_company(self, new_company_page):
@@ -82,9 +83,7 @@ class TestCompany(BaseCase):
 
         assert create_company.is_on_site_text(
             LABELS.nothing_found
-        ) or create_company.is_on_site_text(
-            LABELS.create_first
-        )
+        ) or create_company.is_on_site_text(LABELS.create_first)
 
     @pytest.fixture
     def create_draft(self, company_page: CompanyPage):
@@ -100,6 +99,4 @@ class TestCompany(BaseCase):
         create_draft.go_to_drafts()
         create_draft.delete_all_drafts()
 
-        assert create_draft.is_on_site_text(
-            LABELS.create_first
-        )
+        assert create_draft.is_on_site_text(LABELS.create_first)

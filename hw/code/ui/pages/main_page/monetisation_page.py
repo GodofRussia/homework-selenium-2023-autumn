@@ -5,4 +5,3 @@ from ui.locators.main import MainPageLocators
 class MonetisationPage(BasePage):
     url = "https://ads.vk.com/partner"
     locators = MainPageLocators
-

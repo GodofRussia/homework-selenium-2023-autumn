@@ -29,15 +29,17 @@ from ui.pages.consts import (
     DIV,
     H2,
     HREF,
-    CATALOG_TITLE_PREFIX
+    CATALOG_TITLE_PREFIX,
 )
 
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.common.exceptions import TimeoutException
 from selenium.common.exceptions import NoAlertPresentException
 
+
 class NoSuchPeriodException(Exception):
     pass
+
 
 class CenterOfCommercePage(BasePage):
     url = "https://ads.vk.com/hq/ecomm/catalogs"
@@ -52,9 +54,9 @@ class CenterOfCommercePage(BasePage):
         return self.find_with_text(DIV, WARNING_PROTOCOL_REQUIRED, timeout)
 
     def find_necessary_field_error(self, tab, timeout=None):
-        element = (SPAN if tab == self.TABS.MANUAL else DIV)
+        element = SPAN if tab == self.TABS.MANUAL else DIV
         return self.find_with_text(element, REQUIRED_FIELD, timeout)
-    
+
     def find_necessary_field_error_while_creation(self, timeout=None):
         return self.find_with_text(DIV, REQUIRED_FIELD, timeout)
 
@@ -124,21 +126,19 @@ class CenterOfCommercePage(BasePage):
 
     def find_h2_with_text(self, text, timeout=None) -> WebElement:
         return self.find(self.locators.H2_WITH_TEXT(text), timeout)
-    
+
     def find_product_by_title(self, text, timeout=None) -> WebElement:
         return self.find_with_text_and_class(SPAN, text, TITLE_CLASS, timeout)
 
     def find_product_by_id(self, product_id, timeout=None) -> WebElement:
         return self.find(self.locators.PRODUCT_ID_SVG(product_id), timeout)
-    
+
     def find_catalog_by_title(self, title, timeout=None):
-        return self.find_element_with_text(
-                "span", title, timeout
-        )
+        return self.find_element_with_text("span", title, timeout)
 
     def redirect_to_products_and_find_checkbox_select_products(
         self, timeout, short_timeout=None
-    ) -> WebElement:
+    ) -> WebElement | None:
         self.try_close_study_banner(short_timeout)
         self.switch_catalog_tab(CatalogTabs.PRODUCTS, timeout)
 
@@ -150,13 +150,12 @@ class CenterOfCommercePage(BasePage):
 
     def find_element_with_refresh(
         self, locator, timeout, short_timeout=None
-    ) -> WebElement:
-        element_found = False
-        element = {}
-        while timeout > 0 and element_found is False:
+    ) -> WebElement | None:
+        element = None
+        while timeout > 0:
             try:
                 element = self.find(locator, short_timeout)
-                element_found = True
+                break
             except TimeoutException:
                 self.driver.refresh()
                 timeout -= short_timeout if short_timeout is not None else 5
@@ -189,7 +188,9 @@ class CenterOfCommercePage(BasePage):
     def fill_url_input(self, url, timeout=None):
         self.fill(self.locators.CATALOG_URL_UNPUT, url, timeout)
 
-    def fill_client_id_input(self, client_id, timeout=None) -> WebElement:
+    def fill_client_id_input(
+        self, client_id, timeout=None
+    ) -> WebElement | None:
         if client_id:
             return self.fill_input_with_placeholder(
                 CENTER_OF_COMMERCE_CLIENT_ID_INPUT_TXT, client_id, timeout
@@ -263,10 +264,12 @@ class CenterOfCommercePage(BasePage):
         self.click(self.locators.WARNING_SVG, timeout)
 
     # custom methods
-        
+
     def try_close_study_banner(self, timeout=None):
         try:
-            elem = self.multiple_find(self.locators.CLOSE_STUDY_BUTTON, timeout)[0]
+            elem = self.multiple_find(
+                self.locators.CLOSE_STUDY_BUTTON, timeout
+            )[0]
             self.action_click(elem)
         except TimeoutException:
             pass
@@ -377,8 +380,10 @@ class CenterOfCommercePage(BasePage):
         )
 
     def switch_catalog_tab(self, tab, timeout=None) -> WebElement:
-        elem = self.find(self.locators.TAB_BY_ID(self.CATALOG_TABS[tab]), timeout)
-        if elem.get_attribute('aria-selected') == "true":
+        elem = self.find(
+            self.locators.TAB_BY_ID(self.CATALOG_TABS[tab]), timeout
+        )
+        if elem.get_attribute("aria-selected") == "true":
             return elem
 
         return self.click(elem, timeout)
@@ -452,11 +457,11 @@ class CenterOfCommercePage(BasePage):
         self.open()
 
         return found_title
-    
+
     def check_utm_hover(self, timeout):
-        utm_label_class = self.hover_on_utm_label(
-            timeout
-        ).get_attribute("class")
+        utm_label_class = self.hover_on_utm_label(timeout).get_attribute(
+            "class"
+        )
 
         assert utm_label_class
 

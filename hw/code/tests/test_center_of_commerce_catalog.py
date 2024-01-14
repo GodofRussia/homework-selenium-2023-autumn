@@ -7,16 +7,19 @@ from ui.fixtures import download_directory
 from ui.pages.center_of_commerce import CenterOfCommercePage
 from time import gmtime, strftime
 
-from ui.pages.consts import CatalogTabs, CosmeticProducts, Product, TopCosmeticProduct, CatalogsToBeCreated
+from ui.pages.consts import (
+    CatalogTabs,
+    CosmeticProducts,
+    Product,
+    TopCosmeticProduct,
+    CatalogsToBeCreated,
+)
 
 TIMEOUT = 30
 SHORT_TIMEOUT = 5
 PRODUCTS_LOADING_TIMEOUT = 150
 strftime("%Y-%m-%d %H:%M:%S", gmtime())
 
-# TODO:
-    # конфликты
-    # проверить принты и слипы
 
 class TestCenterOfCommerceCatalog(BaseCase):
     authorize = True
@@ -32,10 +35,7 @@ class TestCenterOfCommerceCatalog(BaseCase):
 
         for catalog in CatalogsToBeCreated:
             field = catalog.url
-            if (
-                catalog.tab
-                == center_of_commerce_page_session.TABS.MANUAL
-            ):
+            if catalog.tab == center_of_commerce_page_session.TABS.MANUAL:
                 field = os.path.join(mock_files, field)
 
             center_of_commerce_page_session.go_to_create_catalog(
@@ -78,7 +78,6 @@ class TestCenterOfCommerceCatalog(BaseCase):
                 center_of_commerce_page_session.driver
             )
 
-
     @pytest.mark.parametrize(
         "from_what, to",
         [
@@ -98,9 +97,9 @@ class TestCenterOfCommerceCatalog(BaseCase):
         center_of_commerce_page.switch_catalog(to, SHORT_TIMEOUT)
 
         assert (
-            center_of_commerce_page.find_catalog_title(to, SHORT_TIMEOUT) is not None
+            center_of_commerce_page.find_catalog_title(to, SHORT_TIMEOUT)
+            is not None
         )
-
 
     @pytest.mark.parametrize(
         "catalog, tab",
@@ -172,11 +171,15 @@ class TestCenterOfCommerceCatalog(BaseCase):
         center_of_commerce_page.search_product(product.product_id, TIMEOUT)
 
         assert (
-            center_of_commerce_page.find_product_by_title(product.title, TIMEOUT)
+            center_of_commerce_page.find_product_by_title(
+                product.title, TIMEOUT
+            )
             is not None
         )
 
-    @pytest.mark.parametrize("catalog", [CatalogsToBeCreated[0].title, CatalogsToBeCreated[2].title])
+    @pytest.mark.parametrize(
+        "catalog", [CatalogsToBeCreated[0].title, CatalogsToBeCreated[2].title]
+    )
     def test_catalog_products_table_settings_widget(
         self,
         catalog,
@@ -195,14 +198,8 @@ class TestCenterOfCommerceCatalog(BaseCase):
     @pytest.mark.parametrize(
         "catalog, product",
         [
-            (
-                CatalogsToBeCreated[0].title,
-                CosmeticProducts[0]
-            ),
-            (
-                CatalogsToBeCreated[0].title,
-                CosmeticProducts[1]
-            ),
+            (CatalogsToBeCreated[0].title, CosmeticProducts[0]),
+            (CatalogsToBeCreated[0].title, CosmeticProducts[1]),
         ],
     )
     def test_catalog_product_widget(
@@ -219,12 +216,15 @@ class TestCenterOfCommerceCatalog(BaseCase):
         )
 
         assert (
-            center_of_commerce_page.find_product_widget_by_title(product.title, TIMEOUT)
+            center_of_commerce_page.find_product_widget_by_title(
+                product.title, TIMEOUT
+            )
             is not None
         )
 
     @pytest.mark.parametrize(
-        "catalog, product", [(CatalogsToBeCreated[0].title, TopCosmeticProduct)]
+        "catalog, product",
+        [(CatalogsToBeCreated[0].title, TopCosmeticProduct)],
     )
     def test_catalog_product_sort(
         self,
@@ -238,12 +238,15 @@ class TestCenterOfCommerceCatalog(BaseCase):
         center_of_commerce_page.click_on_sort_products(TIMEOUT)
 
         assert (
-            center_of_commerce_page.find_product_by_id(product.product_id, TIMEOUT)
+            center_of_commerce_page.find_product_by_id(
+                product.product_id, TIMEOUT
+            )
             is not None
         )
 
     @pytest.mark.parametrize(
-        "catalog, redirected_tab", [(CatalogsToBeCreated[0].title, CatalogTabs.DIAGNOSTIC)]
+        "catalog, redirected_tab",
+        [(CatalogsToBeCreated[0].title, CatalogTabs.DIAGNOSTIC)],
     )
     def test_catalog_warning_button(
         self,

@@ -19,10 +19,16 @@ class LeadPageLocators(BasePageLocators):
     MODAL = (By.XPATH, '//*[contains(@class, "ModalRoot")]')
 
     ALL_LEAD_CHECKBOX = (
-        By.XPATH, "//div[contains(@class, 'BaseTable__header')]//input[@type='checkbox']")
+        By.XPATH,
+        "//div[contains(@class, 'BaseTable__header')]//input[@type='checkbox']",
+    )
     SELECTORS = (By.XPATH, '//*[@data-testid="select-options"]')
     DELETE_LABELS = (
-        By.XPATH, '//*[contains(@class, "vkuiPopperPortal")]//*[contains(text(), "Удалить")]')
+        By.XPATH,
+        '//*[contains(@class, "vkuiPopperPortal")]//*[contains(text(), "Удалить")]',
+    )
 
     MODAL_BUTTONS = (
-        By.XPATH, '//*[contains(@class, "ModalConfirm_wrapper")]//button')
+        By.XPATH,
+        '//*[contains(@class, "ModalConfirm_wrapper")]//button',
+    )

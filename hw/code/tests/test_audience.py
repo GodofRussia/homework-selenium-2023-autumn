@@ -15,7 +15,8 @@ class TestAudience(BaseCase):
 
     def test_max_len_name(self, audience_page: AudiencePage):
         audience_page.click_create_button().write_text_to_name(
-            INPUT_TEXT.string_256_symbols)
+            INPUT_TEXT.string_256_symbols
+        )
 
         assert audience_page.is_on_site_text(ERR_TEXT.len_err_auditory)
 
@@ -25,10 +26,8 @@ class TestAudience(BaseCase):
         audience_page.click_lead_input().select_lead_option()
         audience_page.click_checkbox_lead()
 
-        audience_page.write_to_from_field(
-            INPUT_TEXT.big_value_for_days)
-        audience_page.write_to_to_field(
-            INPUT_TEXT.small_value_for_days)
+        audience_page.write_to_from_field(INPUT_TEXT.big_value_for_days)
+        audience_page.write_to_to_field(INPUT_TEXT.small_value_for_days)
 
         assert audience_page.wait_to_field_equal(INPUT_TEXT.big_value_for_days)
 
@@ -38,13 +37,12 @@ class TestAudience(BaseCase):
         audience_page.click_lead_input().select_lead_option()
         audience_page.click_checkbox_lead()
 
-        audience_page.write_to_to_field(
-            INPUT_TEXT.small_value_for_days)
-        audience_page.write_to_from_field(
-            INPUT_TEXT.big_value_for_days)
+        audience_page.write_to_to_field(INPUT_TEXT.small_value_for_days)
+        audience_page.write_to_from_field(INPUT_TEXT.big_value_for_days)
 
         assert audience_page.wait_from_filed_equal(
-            INPUT_TEXT.small_value_for_days)
+            INPUT_TEXT.small_value_for_days
+        )
 
     def test_select_period_zero(self, audience_page: AudiencePage):
         audience_page.click_create_button().click_add_source()
@@ -85,8 +83,7 @@ class TestAudience(BaseCase):
     def test_delete_sources(self, audience_page: AudiencePage):
         audience_page.click_create_button().click_add_source()
         audience_page.select_vk_group_region()
-        audience_page.write_to_vk_group(
-            URLS.vk_group_url).select_vk_group()
+        audience_page.write_to_vk_group(URLS.vk_group_url).select_vk_group()
         audience_page.click_save_button_modal()
 
         audience_page.delete_source()

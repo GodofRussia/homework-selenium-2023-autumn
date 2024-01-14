@@ -30,7 +30,8 @@ class NewCompanyPage(BasePage):
         self.search_action_click(
             self.locators.CONTINUE_BUTTON,
             BASE_POSITIONS.last_search_pos,
-            timeout)
+            timeout,
+        )
 
         return self
 
@@ -49,7 +50,8 @@ class NewCompanyPage(BasePage):
 
     def click_selector_strategy(self):
         selector = self.find(
-            self.locators.SELECTOR_STRATEGY, WaitTime.SHORT_WAIT)
+            self.locators.SELECTOR_STRATEGY, WaitTime.SHORT_WAIT
+        )
         self.action_click(selector)
 
         return self
@@ -95,10 +97,10 @@ class NewCompanyPage(BasePage):
 
         return self
 
-    def select_lead_option(self,
-                           what_option: int = BASE_POSITIONS.first_search_pos):
-        self.search_action_click(
-            self.locators.SELECT_LEAD_OPTION, what_option)
+    def select_lead_option(
+        self, what_option: int = BASE_POSITIONS.first_search_pos
+    ):
+        self.search_action_click(self.locators.SELECT_LEAD_OPTION, what_option)
 
     def click_date(self):
         self.search_action_click(self.locators.DATE_PICKER)
@@ -128,7 +130,8 @@ class NewCompanyPage(BasePage):
         try:
             self.action_click(filter_btn)
             self.wait(WaitTime.SUPER_SHORT_WAIT).until(
-                lambda _: self.is_on_site_text(LABELS.show_regions))
+                lambda _: self.is_on_site_text(LABELS.show_regions)
+            )
 
             return True
         except TimeoutException:
@@ -138,16 +141,18 @@ class NewCompanyPage(BasePage):
 
     def click_until_next_page(self):
         filter_btn = self.multiple_find(self.locators.CONTINUE_BUTTON)[
-            BASE_POSITIONS.last_search_pos]
+            BASE_POSITIONS.last_search_pos
+        ]
         self.wait(WaitTime.MEDIUM_WAIT).until(
-            lambda _: self._wait_for_next_page(filter_btn))
+            lambda _: self._wait_for_next_page(filter_btn)
+        )
 
         return self
 
-    def get_to_next(self, site_url=URLS.test_site, cost=INPUT_TEXT.corrected_cost):
-        self.site_region_click().send_keys_site(site_url).send_cost(
-            cost
-        )
+    def get_to_next(
+        self, site_url=URLS.test_site, cost=INPUT_TEXT.corrected_cost
+    ):
+        self.site_region_click().send_keys_site(site_url).send_cost(cost)
         self.click_until_next_page()
 
         return self
