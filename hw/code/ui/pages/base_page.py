@@ -12,6 +12,7 @@ from ui.pages.consts import (
     AUTH_COOKIE_NAME,
     CHECKED_JS_SCRIPT,
     SCROLL_INTO_VIEW_JS_SCRIPT,
+    JS_CLICK,
 )
 
 from selenium.webdriver.common.keys import Keys
@@ -265,6 +266,9 @@ class BasePage(object):
 
     def scroll_into_view(self, element):
         self.driver.execute_script(SCROLL_INTO_VIEW_JS_SCRIPT, element)
+
+    def js_click(self, element):
+        self.driver.execute_script(JS_CLICK, element)
 
     def is_on_site_text(self, text: str, timeout=None):
         try:

@@ -1,5 +1,6 @@
 SCROLL_INTO_VIEW_JS_SCRIPT = "arguments[0].scrollIntoView(true);"
 CHECKED_JS_SCRIPT = "return arguments[0].checked"
+JS_CLICK = "arguments[0].click();"
 
 AUTH_COOKIE_NAME = "remixnsid"
 

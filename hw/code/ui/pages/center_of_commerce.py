@@ -320,9 +320,7 @@ class CenterOfCommercePage(BasePage):
         )
 
     def hover_on_catalog_cell(self, title, timeout=None) -> WebElement:
-        return self.hover_on_element(
-            self.locators.CATALOG_CELL(title), timeout
-        )
+        return self.find(self.locators.CATALOG_CELL(title), timeout)
 
     def switch_catalog(self, title, timeout=None) -> WebElement:
         self.click(self.locators.CHOOOSE_CATALOG, timeout)
@@ -408,13 +406,15 @@ class CenterOfCommercePage(BasePage):
         return found_title
 
     def remove_catalog_by_title(self, title, timeout=None):
+        try:
+            alert = self.driver.switch_to.alert
+            alert.accept()
+        except NoAlertPresentException:
+            pass
         self.search_catalog(title, timeout)
         element = self.hover_on_catalog_cell(title, timeout)
-        new_element = element.find_element(
-            self.locators.CATALOG_CELL_MORE_ACTIONS[0],
-            self.locators.CATALOG_CELL_MORE_ACTIONS[1],
-        )
-        self.action_click(new_element)
-        self.click_element_with_text(SPAN, "Удалить каталог")
+        self.js_click(element)
 
-        return self.click_element_with_text(SPAN, "Удалить")
+        self.click_element_with_text(SPAN, "Удалить каталог", timeout)
+
+        return self.click_element_with_text(SPAN, "Удалить", timeout)

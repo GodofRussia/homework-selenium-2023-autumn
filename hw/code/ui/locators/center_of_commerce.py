@@ -158,9 +158,9 @@ class CenterOfCommerceLocators:
     )
     CATALOG_CELL = lambda title: (
         By.XPATH,
-        f'//div[contains(@class, "CatalogsTable_item__1fpKp") and contains(., "{title}")]',
+        f'//div[contains(@class, "CatalogsTable_item__1fpKp") and contains(., "{title}")]//button',
     )
     CATALOG_CELL_MORE_ACTIONS = (
         By.XPATH,
-        '//div[contains(@class, "CatalogsTable_itemMenu__KkH-1")]',
+        '//button[contains(@data-testid, "catalog-item-menu")]',
     )

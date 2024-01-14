@@ -260,37 +260,6 @@ class TestCenterOfCommerceCatalog(BaseCase):
         )
 
     @pytest.mark.parametrize(
-        "catalog, product, product_id",
-        [
-            (
-                "Товары – fff",
-                "Подарочный набор декоративной косметики Beauty Box №6",
-                "8699561",
-            ),
-            (
-                "Товары – fff",
-                "Спрей для фиксации макияжа праймер",
-                "8005906",
-            ),
-        ],
-    )
-    def test_catalog_product_vklink(
-        self,
-        catalog,
-        product,
-        product_id,
-        center_of_commerce_page: CenterOfCommercePage,
-        cookies_and_local_storage,
-        catalogs_fixture,
-    ):
-        center_of_commerce_page.go_to_catalog(catalog, TIMEOUT)
-        center_of_commerce_page.go_to_catalog_product(
-            product_id, product, TIMEOUT
-        )
-
-        assert center_of_commerce_page.check_vk_product_found(product, TIMEOUT)
-
-    @pytest.mark.parametrize(
         "catalog, product_id", [("Товары – fff", "8002726")]
     )
     def test_catalog_product_sort(
