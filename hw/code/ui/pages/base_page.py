@@ -1,3 +1,4 @@
+import os
 import time
 import logging
 from typing import List
@@ -61,7 +62,7 @@ class BasePage(object):
         except TimeoutException as e:
             self.logger.debug("Banner didnt show:", e)
 
-    def close_banner(self, timeout=3):
+    def close_banner(self, timeout=None):
         try:
             self.click(self.basic_locators.BANNER_BUTTON, timeout)
         except TimeoutException as e:
@@ -200,10 +201,10 @@ class BasePage(object):
         elem.click()
         return elem
 
-    def slow_click(self, locator, fast_timeout, slow_timeout=5):
+    def slow_click(self, locator, fast_timeout, slow_timeout=None):
         def wait_handler(element):
             try:
-                WebDriverWait(self.driver, fast_timeout).until(
+                self.wait(fast_timeout).until(
                     EC.element_to_be_clickable(
                         self.basic_locators.BANNER_BUTTON
                     )
@@ -214,7 +215,7 @@ class BasePage(object):
                 return True
 
         element = self.find(locator, slow_timeout)
-        WebDriverWait(self.driver, slow_timeout).until(
+        self.wait(slow_timeout).until(
             lambda _: wait_handler(element)
         )
 
@@ -280,6 +281,9 @@ class BasePage(object):
 
     def check_auth_cookie(self) -> bool:
         return self.driver.get_cookie(AUTH_COOKIE_NAME) != None
+    
+    def wait_for_file_to_download(self, file_path, timeout=None):
+        return self.wait(timeout).until(lambda _: os.path.exists(file_path))
 
     @contextmanager
     def wait_for_url_change(self, timeout=10, **kwargs):
@@ -324,4 +328,7 @@ class BasePage(object):
             self.driver.add_cookie(cookie)
 
         self.driver.get(current_url)
-        print(self.driver.get_cookies())
+
+    
+    def delete_cookies(self):
+        self.driver.delete_all_cookies()

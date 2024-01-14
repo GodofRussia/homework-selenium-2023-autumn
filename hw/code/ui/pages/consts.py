@@ -1,5 +1,5 @@
 from collections.abc import Mapping
-from typing import NamedTuple
+from typing import List, NamedTuple
 
 SCROLL_INTO_VIEW_JS_SCRIPT = "arguments[0].scrollIntoView(true);"
 CHECKED_JS_SCRIPT = "return arguments[0].checked"
@@ -12,6 +12,7 @@ DIV = "div"
 INPUT = "input"
 H2 = "h2"
 HREF = "href"
+HOVER = "hover"
 
 
 # Main page and navbar
@@ -82,6 +83,21 @@ class CatalogTabs(Mapping):
             case _:
                 raise NoSuchCatalogTabException()
 
+PRODUCTS_TAB_ID = "tab_catalogs.catalogMain"
+
+CATALOG_TITLE_PREFIX = "Товары – "
+
+class Catalog(NamedTuple):
+    tab: str
+    url: str
+    title: str
+
+CatalogsToBeCreated: List[Catalog] = [Catalog(tab, url, title) for tab, url, title in [
+    (CenterOfCommerceTabs.FEED, "https://vk.com/luxvisage_cosmetics", "fff"),
+    (CenterOfCommerceTabs.FEED, "https://vk.com/market-204475787", "dddsdsd"),
+    (CenterOfCommerceTabs.FEED, "https://vk.com/voentorg_chipok", "Тачки"),
+]]
+
 class Product(NamedTuple):
     product_id: int
     title: str
@@ -94,7 +110,9 @@ CosmeticProducts = [Product(8005304, "Тени для век Glam Look мато�
 
 TopCosmeticProduct = Product(8002726, "Лак для ногтей GEL SHINE перламутровый")
 
-PRODUCTS_TAB_ID = "tab_catalogs.catalogMain"
+class MarketPlaceApiInput:
+    TOKEN = "Введите токен для доступа к API"
+    KEY = "Введите ключ API"
 
 
 CENTER_OF_COMMERCE_TABLE_SETTINGS = "Настройка таблицы"

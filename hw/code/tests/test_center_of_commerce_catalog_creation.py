@@ -6,7 +6,7 @@ from time import gmtime, strftime
 import os
 from selenium.common.exceptions import TimeoutException
 
-from ui.pages.consts import CatalogPeriods
+from ui.pages.consts import CatalogPeriods, CenterOfCommerceTabs as TABS, MarketPlaceApiInput
 
 TIMEOUT = 30
 
@@ -28,47 +28,6 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
             center_of_commerce_page.find_new_catalog_title(TIMEOUT) is not None
         )
 
-    @pytest.mark.parametrize(
-        "query,result",
-        [("fff", "Товары – fff"), ("19", "Товары – Каталог 2023-12-19")],
-    )
-    def test_catalog_search(
-        self,
-        query,
-        result,
-        center_of_commerce_page: CenterOfCommercePage,
-        cookies_and_local_storage,
-    ):
-        center_of_commerce_page.close_banner()
-        center_of_commerce_page.search_catalog(query, TIMEOUT)
-
-        assert (
-            center_of_commerce_page.find_catalog_by_title(
-                result, TIMEOUT
-            )
-            is not None
-        )
-
-    @pytest.mark.parametrize(
-        "title", ["Товары – fff", "Товары – Каталог 2023-12-19"]
-    )
-    def test_redirect_to_catalog(
-        self,
-        title,
-        center_of_commerce_page: CenterOfCommercePage,
-        cookies_and_local_storage,
-    ):
-        center_of_commerce_page.close_banner()
-        center_of_commerce_page.go_to_catalog(title, TIMEOUT)
-
-        # TODO
-        assert (
-            center_of_commerce_page.find_element_with_text(
-                "span", "История загрузок", TIMEOUT
-            )
-            is not None
-        )
-
     def test_creation_title_name_required_message(
         self,
         center_of_commerce_page: CenterOfCommercePage,
@@ -85,13 +44,12 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
         )
 
     @pytest.mark.parametrize(
-        "tab, element",
-        [("feed", "div"), ("marketplace", "div"), ("manual", "span")],
+        "tab",
+        [(TABS.FEED), (TABS.MARKETPLACE), (TABS.MANUAL)],
     )
     def test_url_field_error_message(
         self,
         tab,
-        element,
         center_of_commerce_page: CenterOfCommercePage,
         cookies_and_local_storage,
     ):
@@ -102,13 +60,13 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
 
         assert (
             center_of_commerce_page.find_necessary_field_error(
-                element, TIMEOUT
+                tab, TIMEOUT
             )
             is not None
         )
 
     @pytest.mark.parametrize(
-        "tab,url", [("feed", "ddd"), ("marketplace", "dda")]
+        "tab,url", [(TABS.FEED, "ddd"), (TABS.MARKETPLACE, "dda")]
     )
     def test_creation_url_field_protocol_message(
         self,
@@ -141,10 +99,11 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
         cookies_and_local_storage,
     ):
         center_of_commerce_page.go_to_create_feed_catalog(TIMEOUT)
+        center_of_commerce_page.try_close_study_banner()
         center_of_commerce_page.set_refresh_period(period, TIMEOUT)
 
         assert (
-            center_of_commerce_page.find_by_period(period)
+            center_of_commerce_page.find_by_period(period, TIMEOUT)
             is not None
         )
 
@@ -190,6 +149,7 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
         cookies_and_local_storage,
     ):
         center_of_commerce_page.go_to_create_feed_catalog(TIMEOUT)
+        center_of_commerce_page.try_close_study_banner()
 
         assert center_of_commerce_page.check_utm_hover(TIMEOUT)
 
@@ -253,24 +213,24 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
         )
 
     @pytest.mark.parametrize(
-        "url, apikey, placeholder, client_id",
+        "url, apikey, input_type, client_id",
         [
             (
                 "https://www.wildberries.ru/brands/crocs/all",
                 "eee",
-                "Введите ключ API",
+                MarketPlaceApiInput.KEY,
                 "",
             ),
             (
                 "https://www.ozon.ru/seller/qika-1210208/odezhda-obuv-i-aksessuary-7500/?miniapp=seller_1210208",
                 "aaa",
-                "Введите ключ API",
+                MarketPlaceApiInput.KEY,
                 "aa",
             ),
             (
                 "https://aliexpress.ru/store/1102452055?g=y&page=1&spm=a2g2w.detail.0.0.56762b41CeVj0X",
                 "bbb",
-                "Введите токен для доступа к API",
+                MarketPlaceApiInput.TOKEN,
                 "",
             ),
         ],
@@ -279,7 +239,7 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
         self,
         url,
         apikey,
-        placeholder,
+        input_type,
         client_id,
         center_of_commerce_page: CenterOfCommercePage,
         cookies_and_local_storage,
@@ -288,7 +248,7 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
         center_of_commerce_page.fill_url_input(url, TIMEOUT)
         center_of_commerce_page.fill_client_id_input(client_id, TIMEOUT)
         center_of_commerce_page.fill_api_key_input(
-            placeholder, apikey, TIMEOUT
+            input_type, apikey, TIMEOUT
         )
         center_of_commerce_page.create_catalog_finish(TIMEOUT)
 
@@ -305,24 +265,24 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
         )
 
     @pytest.mark.parametrize(
-        "url, apikey, placeholder, client_id",
+        "url, apikey, input_type, client_id",
         [
             (
                 "https://www.wildberries.ru/brands/crocs/all",
                 "ааа",
-                "Введите ключ API",
+                MarketPlaceApiInput.KEY,
                 "",
             ),
             (
                 "https://www.ozon.ru/seller/qika-1210208/odezhda-obuv-i-aksessuary-7500/?miniapp=seller_1210208",
                 "ььь",
-                "Введите ключ API",
+                MarketPlaceApiInput.KEY,
                 "aa",
             ),
             (
                 "https://aliexpress.ru/store/1102452055?g=y&page=1&spm=a2g2w.detail.0.0.56762b41CeVj0X",
                 "ввв",
-                "Введите токен для доступа к API",
+                MarketPlaceApiInput.TOKEN,
                 "",
             ),
         ],
@@ -331,7 +291,7 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
         self,
         url,
         apikey,
-        placeholder,
+        input_type,
         client_id,
         center_of_commerce_page: CenterOfCommercePage,
         cookies_and_local_storage,
@@ -340,7 +300,7 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
         center_of_commerce_page.fill_url_input(url, TIMEOUT)
         center_of_commerce_page.fill_client_id_input(client_id, TIMEOUT)
         center_of_commerce_page.fill_api_key_input(
-            placeholder, apikey, TIMEOUT
+           input_type, apikey, TIMEOUT
         )
         center_of_commerce_page.create_catalog_finish(TIMEOUT)
 
@@ -406,12 +366,9 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
         timeout = TIMEOUT
 
         file_path = os.path.join(download_directory, file_path)
-        while not os.path.exists(file_path) and timeout > 0:
-            # TODO тут тоже выпилить sleep
-            time.sleep(1)
-            timeout -= 1
 
-        existence = os.path.exists(file_path)
+        existence = center_of_commerce_page.wait_for_file_to_download(file_path)
+
         os.remove(file_path)
 
         assert existence

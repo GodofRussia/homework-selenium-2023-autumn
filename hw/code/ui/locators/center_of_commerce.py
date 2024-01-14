@@ -164,3 +164,7 @@ class CenterOfCommerceLocators:
         By.XPATH,
         '//button[contains(@data-testid, "catalog-item-menu")]',
     )
+    CLOSE_STUDY_BUTTON = (
+        By.XPATH,
+        '//div[contains(@class, "CloseButton")]',
+    )
