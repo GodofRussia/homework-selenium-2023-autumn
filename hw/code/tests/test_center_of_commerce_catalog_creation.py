@@ -6,6 +6,8 @@ from time import gmtime, strftime
 import os
 from selenium.common.exceptions import TimeoutException
 
+from ui.pages.consts import CatalogPeriods
+
 TIMEOUT = 30
 
 strftime("%Y-%m-%d %H:%M:%S", gmtime())
@@ -41,8 +43,8 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
         center_of_commerce_page.search_catalog(query, TIMEOUT)
 
         assert (
-            center_of_commerce_page.find_element_with_text(
-                "span", result, TIMEOUT
+            center_of_commerce_page.find_catalog_by_title(
+                result, TIMEOUT
             )
             is not None
         )
@@ -59,6 +61,7 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
         center_of_commerce_page.close_banner()
         center_of_commerce_page.go_to_catalog(title, TIMEOUT)
 
+        # TODO
         assert (
             center_of_commerce_page.find_element_with_text(
                 "span", "История загрузок", TIMEOUT
@@ -77,7 +80,7 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
         center_of_commerce_page.create_catalog_finish(TIMEOUT)
 
         assert (
-            center_of_commerce_page.find_necessary_field_error("div", TIMEOUT)
+            center_of_commerce_page.find_necessary_field_error_while_creation(TIMEOUT)
             is not None
         )
 
@@ -123,18 +126,17 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
         assert center_of_commerce_page.find_https_error(TIMEOUT) is not None
 
     @pytest.mark.parametrize(
-        "period, selector_field",
+        "period",
         [
-            ("everyday", "Ежедневно"),
-            ("1 hour", "1 час"),
-            ("4 hours", "4 часа"),
-            ("8 hours", "8 часов"),
+            (CatalogPeriods.EVERYDAY),
+            (CatalogPeriods.ONE_HOUR),
+            (CatalogPeriods.FOUR_HOURS),
+            (CatalogPeriods.EIGHT_HOURS),
         ],
     )
     def test_creation_period_selector(
         self,
         period,
-        selector_field,
         center_of_commerce_page: CenterOfCommercePage,
         cookies_and_local_storage,
     ):
@@ -142,9 +144,7 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
         center_of_commerce_page.set_refresh_period(period, TIMEOUT)
 
         assert (
-            center_of_commerce_page.find_with_text(
-                "span", selector_field, TIMEOUT
-            )
+            center_of_commerce_page.find_by_period(period)
             is not None
         )
 
@@ -191,13 +191,7 @@ class TestCenterOfCommerceCatalogCreation(BaseCase):
     ):
         center_of_commerce_page.go_to_create_feed_catalog(TIMEOUT)
 
-        utm_label_class = center_of_commerce_page.hover_on_utm_label(
-            TIMEOUT
-        ).get_attribute("class")
-
-        assert utm_label_class
-
-        assert "vkuiTappable--hover-background" in utm_label_class
+        assert center_of_commerce_page.check_utm_hover(TIMEOUT)
 
     @pytest.mark.parametrize("url", ["https://vk.com/ninoauto"])
     def test_creation_marketplace_error_incorrect_url(
