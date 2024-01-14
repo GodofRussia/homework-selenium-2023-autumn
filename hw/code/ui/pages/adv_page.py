@@ -1,22 +1,22 @@
-import os
 import re
 
-from selenium.webdriver.support.wait import WebDriverWait
 from ui.locators.adv import AdvLocators
 from ui.pages.base_page import BasePage
 from ui.pages.group_adv_page import GroupAdvPage
 
 from ui.pages.consts import (
-    TEST_FILE_ADV_PAGE_NAME as TEST_FILE_NAME,
+    URLS,
+    WaitTime,
+    BASE_POSITIONS,
+    POSITIONS_ADV
 )
 
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
+from selenium.common.exceptions import TimeoutException
 
 
 class AdvPage(BasePage):
-    url = "https://ads.vk.com/hq/new_create/ad_plan"
+    url = URLS.new_ad
     locators = AdvLocators
 
     def get_page(self):
@@ -27,20 +27,20 @@ class AdvPage(BasePage):
         return self
 
     def click_continue_button(self):
-        buttons = self.multiple_find(self.locators.FOOTER_BUTTONS)
-        el = buttons[-1]
-        self.action_click(el)
+        self.search_action_click(
+            self.locators.FOOTER_BUTTONS, POSITIONS_ADV.continue_button)
         return self
 
     def send_text_to_title(self, text: str):
-        el = self.multiple_find(self.locators.INPUT_TITLE)[0]
-        el.clear()
-        el.send_keys(text, Keys.RETURN)
+        el = self.multiple_find(self.locators.INPUT_TITLE)[
+            POSITIONS_ADV.title_position]
+        self.send_keys_with_enter(el, text)
 
         return self
 
     def get_title_max(self) -> int:
-        el = self.multiple_find(self.locators.COUNTS_CHARS)[0]
+        el = self.multiple_find(self.locators.COUNTS_CHARS)[
+            POSITIONS_ADV.title_position]
         text = el.text
 
         matches = re.search(r"\d+ / (\d+)", text)
@@ -52,87 +52,122 @@ class AdvPage(BasePage):
 
     def send_url(self, url: str):
         el = self.find(self.locators.URL_INPUT)
-        el.clear()
-        el.send_keys(url, Keys.RETURN)
+        self.send_keys_with_enter(el, url)
 
         return self
 
-    def select_logo(self, number_of_logo: int):
-        self.action_click(self.find(self.locators.LOGO_INPUT))
-        el = self.multiple_find(self.locators.LOG_VARIANTS)[number_of_logo]
+    def wait_logo_dissapper(self):
+        el = self.multiple_find(self.locators.LOG_VARIANTS)[
+            BASE_POSITIONS.first_search_pos]
 
-        self.action_click(el)
+        self.wait(WaitTime.SUPER_SHORT_WAIT).until(
+            EC.staleness_of(el))
+        return self
+
+    def select_logo(self,
+                    number_of_logo: int = BASE_POSITIONS.first_search_pos):
+        self.search_action_click(self.locators.LOGO_INPUT)
+        self.search_action_click(self.locators.LOG_VARIANTS, number_of_logo)
+
         return self
 
     def write_to_inputs(self, text: str):
         inputs = self.multiple_find(self.locators.TEXT_INPUTS)
 
         for i in inputs:
-            i.clear()
-            i.send_keys(text, Keys.RETURN)
+            self.send_keys_with_enter(i, text)
 
         return self
 
     def write_to_textarea(self, text: str):
         areas = self.multiple_find(self.locators.AREA_INPUTS)
         for i in areas:
-            i.clear()
-            i.send_keys(text, Keys.RETURN)
+            self.send_keys_with_enter(i, text)
 
         return self
 
     def get_company_name(self):
         return self.find(self.locators.COMPANY_NAME).text
 
-    def click_send_button(self, timeout=10):
-        self.action_click(self.find(self.locators.SEND_BUTTON, timeout))
+    def click_send_button(self, timeout=WaitTime.LONG_WAIT):
+        self.click(self.locators.SEND_BUTTON)
         return self
 
-    # Return name of company, that was created
-    def create_company(self, url, timeout=20) -> str:
+    def create_company(self, url, timeout=WaitTime.LONG_WAIT) -> str:
         self.get_page()
-        self.select_logo(0).write_to_inputs(
+
+        self.select_logo(BASE_POSITIONS.first_search_pos).write_to_inputs(
             url,
-        ).write_to_textarea(url)
+        )
+        self.write_to_textarea(url)
+
         name = self.get_company_name()
 
-        self.click_media_upload().select_media_options().add_media_option()
-        self.click_continue_button().click_send_button(timeout)
+        self.click_media_upload().wait_load_upload_modal()
+        self.select_media_options().add_media_option()
+        self.click_continue_until_modal().click_send_button()
+        self.wait_for_company_page()
 
         return name
 
+    def wait_for_company_page(self):
+        self.multiple_find(self.locators.FILTER_BUTTON, WaitTime.LONG_WAIT)
+        return self
+
+    def wait_for_only_one_upload_field(self):
+        return len(self.multiple_find(
+            self.locators.CHOOSE_MEDIA,
+            WaitTime.SUPER_SHORT_WAIT)
+        ) == 1
+
     def click_media_upload(self):
-        self.action_click(self.find(self.locators.CHOOSE_MEDIA))
+        self.wait(WaitTime.SUPER_LONG_WAIT).until(
+            lambda _: self.wait_for_only_one_upload_field())
+        self.click(self.locators.CHOOSE_MEDIA)
         return self
 
-    def select_media_options(self, options=0):
-        elements = self.multiple_find(self.locators.MEDIA_OPTIONS)
-        self.wait(10).until(
-            EC.visibility_of_element_located(self.locators.MEDIA_OPTIONS)
-        )
-        self.scroll_into_view(elements[options])
-        self.action_click(elements[options])
+    def select_media_options(self, options=BASE_POSITIONS.first_search_pos):
+        self.search_action_click(self.locators.MEDIA_OPTIONS, options)
         return self
 
-    def add_media_option(self, timeout=10):
-        el = self.find(self.locators.ADD_MEDIA)
-        self.scroll_into_view(el)
-        el = self.wait(timeout).until(
-            EC.visibility_of_element_located(self.locators.ADD_MEDIA)
-        )
-
-        self.action_click(el)
+    def add_media_option(self):
+        self.search_action_click(self.locators.ADD_MEDIA)
         return self
 
     def upload_logo(self, file):
-        self.action_click(self.find(self.locators.LOGO_INPUT, 20))
-        file_input = self.find(self.locators.LOGO_INPUT_FILE)
+        self.search_action_click(
+            locator=self.locators.LOGO_INPUT, timeout=WaitTime.LONG_WAIT)
 
-        file_input.clear()
+        file_input = self.find(self.locators.LOGO_INPUT_FILE)
         file_input.send_keys(file)
 
         el = self.find(self.locators.LOADING_IMG)
-        self.wait(90).until(EC.staleness_of(el))
+        self.wait(WaitTime.LONG_WAIT).until(EC.staleness_of(el))
 
-        self.action_click(self.find(self.locators.CLOSE_MODAL))
+        self.search_action_click(self.locators.CLOSE_MODAL)
+        return self
+
+    def wait_for_modal(self, locator, position) -> bool:
+        try:
+            self.search_action_click(locator, position)
+            self.find(self.locators.MODAL_WIN)
+
+            return True
+        except TimeoutException:
+            pass
+
+        return False
+
+    def click_continue_until_modal(self):
+        self.wait(timeout=WaitTime.LONG_WAIT).until(
+            lambda _: self.wait_for_modal(
+                self.locators.FOOTER_BUTTONS,
+                BASE_POSITIONS.last_search_pos)
+        )
+
+        return self
+
+    def wait_load_upload_modal(self):
+        self.wait(timeout=WaitTime.MEDIUM_WAIT).until(
+            EC.visibility_of_all_elements_located(self.locators.MEDIA_OPTIONS))
         return self

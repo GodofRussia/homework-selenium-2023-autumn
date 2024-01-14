@@ -94,21 +94,22 @@ def get_driver(browser, service, config, download_directory):
     options.add_experimental_option("prefs", prefs)
 
     if browser == "chrome":
+        options.add_argument("--start-maximized")
         driver = webdriver.Chrome(options=options, service=service)
 
     elif browser == "firefox":
         options = webdriver.FirefoxOptions()
         driver = webdriver.Firefox(options=options, service=service)
+        driver.maximize_window()
 
     elif browser == "yandex":
         options.binary_location = config["yandex_browser_path"]
-
+        options.add_argument("--start-maximized")
         driver = webdriver.Chrome(options=options, service=service)
     else:
         raise RuntimeError(f'Unsupported browser: "{browser}"')
 
     # Setup
-    driver.maximize_window()
     return driver
 
 

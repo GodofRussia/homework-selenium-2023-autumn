@@ -18,7 +18,7 @@ class TestNavbarMainPage(BaseCase):
     def test_go_to_sertification_page(self, main_page: MainPage):
         main_page.go_to_sertification_page()
 
-        with self.switch_to_window(self.driver.current_window_handle, True):
+        with self.switch_to_window(True):
             assert (
                 self.driver.current_url
                 == main_page.EXTERNAL_LINKS.SERTIFICATION_URL
@@ -27,7 +27,7 @@ class TestNavbarMainPage(BaseCase):
     def test_go_to_courses_page(self, main_page: MainPage):
         main_page.go_to_video_courses_page()
 
-        with self.switch_to_window(self.driver.current_window_handle, True):
+        with self.switch_to_window(True):
             assert (
                 self.driver.current_url == main_page.EXTERNAL_LINKS.COURSES_URL
             )

@@ -5,7 +5,7 @@ SCROLL_INTO_VIEW_JS_SCRIPT = "arguments[0].scrollIntoView(true);"
 CHECKED_JS_SCRIPT = "return arguments[0].checked"
 JS_CLICK = "arguments[0].click();"
 
-AUTH_COOKIE_NAME = "remixnsid"
+AUTH_COOKIE_NAME = "remixsid"
 
 SPAN = "span"
 DIV = "div"
@@ -150,3 +150,174 @@ class SidebarTabsTitles:
     LEAD_FORMS = "Лид-формы"
     SETTINGS = "Настройки"
     HELP = "Помощь"
+PLACE = "Россия"
+
+
+class WaitTime:
+    SUPER_LONG_WAIT = 50
+    LONG_WAIT = 20
+    MEDIUM_WAIT = 10
+    SHORT_WAIT = 5
+    SUPER_SHORT_WAIT = 1
+
+
+class BASE_POSITIONS:
+    first_search_pos = 0
+    last_search_pos = -1
+
+
+class POSITIONS_ADV:
+    title_position = 0
+    continue_button = 1
+
+
+class POSITIONS_GROUP:
+    bottom_age = 0
+    upper_age = 1
+
+    continue_btn = 1
+    save_btn = 0
+
+    interest_region = 0
+    key_phrase_minus_input = 1
+
+    utm = 1
+    checkbox = 1
+
+
+class POSITIONS_SITE:
+    category_event = 0
+    event_condition = 1
+
+    text_url_pos = 1
+
+    delete_btn_pop_up = 1
+    delete_modal_btn = 1
+
+
+class POSITIONS_AUDIENCE:
+    from_input_days = 0
+    to_input_days = 1
+
+    save_button_modal = 1
+    user_list = 1
+
+    delete_source_btn = 1
+    filter_btn = 2
+
+    period_pos = 0
+    delete_confirm_btn = 1
+    delete_btn_pop_up = 2
+
+
+class URLS:
+    banned_url = "https://labudiduba.com/"
+    redirect_url_err = "Ссылка содержит запрещённый редирект на домен"
+
+    correct_url_text = "https://vk.com/"
+    vk_group_url = "vk.com/vkeducation"
+    vk_group_incorrect_url = "https://vk.com/sweetmarin"
+
+    bad_url = "adbbbsabasb"
+    test_site = "ababababba.com"
+    domen_vk_link = "vk.com"
+
+    ad_plan_url = "https://ads.vk.com/hq/new_create/ad_plan"
+    ad_groups_url = "https://ads.vk.com/hq/dashboard/ad_groups"
+    ads_url = "https://ads.vk.com/hq/dashboard/ads"
+
+    new_ad = "https://ads.vk.com/hq/new_create/ad_plan"
+    site_url = "https://ads.vk.com/hq/pixels"
+    audience_url = "https://ads.vk.com/hq/audience"
+    company_url = "https://ads.vk.com/hq/dashboard/ad_plans?mode=ads&attribution=impression&sort=-created"
+    lead_url = "https://ads.vk.com/hq/leadads/leadforms"
+
+    base_url = "https://ads.vk.com"
+
+
+class ERR_TEXT:
+    latin_err_text = "Используйте латиницу только там, где без неё не обойтись"
+    len_err_text = "Превышена максимальная длина поля"
+
+    err_text = "ошибк"
+
+    len_err_auditory = "Максимальная длина 255 символов"
+    duplication_err = "У вас дублируются"
+
+    incorrect_value_err = "Недопустимое значение переменной"
+    empty_field_err = "Поле не должно быть пустым"
+
+    len_err_site = "Максимальное количество символов - 255"
+    validation_failed = "validation_failed"
+
+
+class INPUT_TEXT:
+    text_to_max_size = "слово"
+
+    big_value_for_days = 10
+    small_value_for_days = 5
+
+    string_256_symbols = "a"*256
+
+    min_period = 1
+    less_than_min_period = 0
+    max_period = 30
+    more_than_max_period = 9999
+
+    key_phrase_text = "строка1"
+    long_key_phrase_text = key_phrase_text * 71
+
+    max_age = 16
+    min_age = 15
+
+    less_than_need_cost = 22
+    empty_value = ""
+    corrected_cost = 200
+
+    incorrect_input_collection_data = "привет"
+    lead_info: str = "asdfawfafwafaw"
+    URL_OPTIONS_LEN = 3
+
+    title_text = "word"
+
+
+class LABELS:
+    create_auditory_text = "Создание аудитории"
+
+    date_sum = "Отчёт по датам"
+    config_table = "Настроить столбцы"
+
+    nothing_found = "Ничего не нашлось"
+    create_first = "Создайте первую рекламную кампанию"
+    show_regions = 'Регионы показа'
+    pixel_found = "Нашли пиксели"
+
+    preview = "Предпросмотр"
+
+
+class CLASSES:
+    pop_down = "vkuiCustomSelect--pop-down"
+    disabled_selector = "vkuiFormField--disabled"
+
+
+GLOBAL_ACTIONS_DURATION = 20
+
+
+def get_events_url(pixel_id):
+    return f"https://ads.vk.com/hq/pixels/{pixel_id}/events"
+
+
+def get_tags_url(pixel_id):
+    return f"https://ads.vk.com/hq/pixels/{pixel_id}/tags"
+
+
+def get_access_url(pixel_id):
+    return f"https://ads.vk.com/hq/pixels/{pixel_id}/pixel_access"
+
+
+def get_count_string(cnt: int):
+    return f"Итого: {cnt}"
+
+
+def get_screenshots_path(name_of_test):
+    return f"screenshots/fail_{name_of_test}.png"

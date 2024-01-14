@@ -6,7 +6,7 @@ YANDEX_DRIVER_PATH = "../../chromedriver-mac-x64/chromedriver"
 
 
 def pytest_addoption(parser):
-    parser.addoption("--browser", default="yandex")
+    parser.addoption("--browser", default="chrome")
     parser.addoption("--yandex_driver_path", default=YANDEX_DRIVER_PATH)
     parser.addoption(
         "--yandex_browser_path", default=DEFAULT_YANDEX_BROWSER_PATH

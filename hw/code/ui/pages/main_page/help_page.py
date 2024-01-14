@@ -5,7 +5,3 @@ from ui.locators.main import MainPageLocators
 class HelpPage(BasePage):
     url = "https://ads.vk.com/help"
     locators = MainPageLocators
-
-    def __init__(self, driver):
-        super().__init__(driver)
-        self.is_opened()

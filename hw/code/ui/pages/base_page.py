@@ -7,13 +7,16 @@ from selenium.webdriver.remote.webelement import WebElement
 from ui.locators import basic
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from pytest import FixtureRequest
+from selenium.common.exceptions import TimeoutException
 
 from ui.pages.consts import (
     AUTH_COOKIE_NAME,
     CHECKED_JS_SCRIPT,
-    SCROLL_INTO_VIEW_JS_SCRIPT,
     JS_CLICK,
+    SCROLL_INTO_VIEW_JS_SCRIPT,
+    GLOBAL_ACTIONS_DURATION,
+    URLS,
+    WaitTime,
 )
 
 from selenium.webdriver.common.keys import Keys
@@ -34,7 +37,7 @@ class PageNotOpenedExeption(Exception):
 class BasePage(object):
     driver: ChromeWebDriver | FireFoxWebDriver
     basic_locators = basic.BasePageLocators()
-    url = "https://ads.vk.com"
+    url = URLS.base_url
 
     # Open url
     def open(self):
@@ -69,20 +72,27 @@ class BasePage(object):
             self.logger.debug("Banner didnt show:", e)
 
     # Open url that set in url of page and check if opened
-    def __init__(self, driver):
+    def __init__(self, driver, open_url=True, **kwargs):
         self.driver = driver
         self.logger = logging.getLogger(__name__)
-        self.open()
+        if (open_url):
+            self.open()
+    
+        check_url = kwargs.get('check_url', False)
+        if (check_url):
+            self.is_opened()
+        
 
     # wait for timeout. Default timeout 5
     def wait(self, timeout=None):
         if timeout is None:
             timeout = 5
+
         return WebDriverWait(self.driver, timeout=timeout)
 
     # Wait timeout to find element by locator
     def find(self, locator, timeout=None, **kwargs) -> WebElement:
-        first = True if "first" in kwargs else False
+        first = kwargs.get("first", False)
 
         return self.wait(timeout).until(
             self._located_cond_for_one(locator, first)
@@ -184,9 +194,9 @@ class BasePage(object):
     def clear_with_validation(self, locator, timeout=None):
         elem = self.find(locator, timeout)
         self.click(locator, timeout)
-        elem.send_keys(Keys.END + Keys.SHIFT + Keys.HOME)
-        time.sleep(3)
-        elem.send_keys(Keys.BACKSPACE)
+        input_text = elem.get_attribute('text')
+        assert input_text is not None
+        self.remove_symbols_from_el(elem, len(input_text))
 
     def search(self, search_locator, query, timeout=None):
         try:
@@ -253,13 +263,18 @@ class BasePage(object):
             EC.presence_of_all_elements_located(locator)
         )
 
-    def action_click(self, element, timeout=50):
+    def action_click(self,
+                     element,
+                     timeout=WaitTime.MEDIUM_WAIT,
+                     duration=GLOBAL_ACTIONS_DURATION):
         self.scroll_into_view(element)
-        self.wait(10).until(EC.visibility_of(element))
+        self.wait(timeout).until(EC.visibility_of(element))
 
-        actions = ActionChains(self.driver, timeout)
+        actions = ActionChains(self.driver, duration)
         actions.move_to_element(
-            self.wait(10).until(EC.element_to_be_clickable(element))
+            self.wait(timeout).until(
+                EC.element_to_be_clickable(element)
+            )
         )
         actions.click(element)
         actions.perform()
@@ -271,7 +286,35 @@ class BasePage(object):
     def js_click(self, element):
         self.driver.execute_script(JS_CLICK, element)
 
-    def is_on_site_text(self, text: str, timeout=None):
+    def action_click_not_clickable(self, element,
+                                   timeout=WaitTime.MEDIUM_WAIT,
+                                   duration=GLOBAL_ACTIONS_DURATION):
+        self.scroll_into_view(element)
+
+        actions = ActionChains(self.driver, duration)
+        actions.move_to_element(element)
+        actions.click(element)
+        actions.perform()
+        return self
+
+    def search_action_click(self, locator, what_choose: int = 0,
+                            timeout: int = WaitTime.LONG_WAIT):
+        el = self.multiple_find(locator, timeout)[what_choose]
+        self.action_click(el, timeout)
+
+        return self
+
+    def search_action_click_not_clickable(self, locator,
+                                          what_choose: int = 0,
+                                          timeout: int = WaitTime.LONG_WAIT):
+        if not timeout:
+            timeout = WaitTime.LONG_WAIT
+        el = self.multiple_find(locator, timeout)[what_choose]
+        self.action_click_not_clickable(el, timeout)
+
+        return self
+
+    def is_on_site_text(self, text: str, timeout=WaitTime.SHORT_WAIT):
         try:
             return self.find(
                 self.basic_locators.CONTAINS_ANY_TEXT(text), timeout
@@ -280,10 +323,25 @@ class BasePage(object):
             return False
 
     def check_auth_cookie(self) -> bool:
-        return self.driver.get_cookie(AUTH_COOKIE_NAME) != None
+        return self.driver.get_cookie(AUTH_COOKIE_NAME) is not None
     
     def wait_for_file_to_download(self, file_path, timeout=None):
         return self.wait(timeout).until(lambda _: os.path.exists(file_path))
+    
+    def contains_any_word(self, words: List[str]):
+        found = False
+        for word in words:
+            if word in self.driver.page_source:
+                return True
+            
+        return found
+
+    def send_keys_with_enter(self, element: WebElement, keys_to_send: str):
+        element.click()
+        element.clear()
+        element.send_keys(keys_to_send, Keys.RETURN)
+
+        return self
 
     @contextmanager
     def wait_for_url_change(self, timeout=10, **kwargs):
@@ -314,11 +372,6 @@ class BasePage(object):
         current_url = self.url
         main_page = BasePage(self.driver)
 
-        # try:
-        #     alert = self.driver.switch_to.alert
-        #     alert.accept()
-        # except NoAlertPresentException:
-        #     pass
         for key, value in cookies[1]:
             self.driver.execute_script(
                 f"localStorage.setItem('{key}', '{value}');"
@@ -332,3 +385,7 @@ class BasePage(object):
     
     def delete_cookies(self):
         self.driver.delete_all_cookies()
+    def remove_symbols_from_el(self, el, len: int):
+        for _ in range(len):
+            el.send_keys(Keys.BACKSPACE)
+        return self

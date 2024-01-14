@@ -39,7 +39,7 @@ class CompanyPageLocators(BasePageLocators):
 
     DRAFT_OPTIONS = (
         By.XPATH,
-        "//div[@data-entityid]//label[contains(@class, 'vkuiCheckbox')]//input[@type='checkbox']",
+        "//div[@data-entityid]//label[contains(@class, 'vkuiCheckbox')]",
     )
 
     COUNT_LINE = (By.XPATH, '//*[contains(@class, "nameCell_footerCell")]')
@@ -47,3 +47,7 @@ class CompanyPageLocators(BasePageLocators):
         By.XPATH,
         '//*[contains(@class,"BaseTable__body")]//*[@role="gridcell"]',
     )
+
+    FILTER_EXIST = (By.XPATH, '//div[contains(@class, "form_wrap")]')
+    COMPANY_NUMBER_PLACE = (
+        By.XPATH, '//*[contains(@class, "nameCell_footerCell")]')

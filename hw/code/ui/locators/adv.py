@@ -78,3 +78,8 @@ class AdvLocators(BasePageLocators):
 
     LOADING_IMG = (By.XPATH, '//*[contains(@class, "ImageItems_loading")]')
     CLOSE_MODAL = (By.XPATH, '//button[@aria-label="Close"]')
+
+    MODAL_WIN = (
+        By.XPATH, '//*[contains(@class, "vkuiModalCardBase__container")]')
+
+    FILTER_BUTTON = (By.XPATH, '//*[@data-testid="filter-button"]')
